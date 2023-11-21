@@ -118,6 +118,10 @@ a {
     max-width: 500px;
 }
 
+.white-text {
+    color: white;
+ }
+
 .token-amount {
     width: 50px;
     max-width: 50px;
