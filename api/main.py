@@ -5,6 +5,7 @@ import json
 app = Flask(__name__)
 
 # Define the base URL
+#base_url = 'http://192.168.0.20:9050'
 base_url= 'http://213.239.193.208:9053'
 flask_url = 'https://ergo-node-explorer.vercel.app'
 
@@ -62,6 +63,7 @@ def process_transaction(transaction_id):
         return {
             'Transaction ID': transaction_id,
             'Inclusion Height': transaction_data.get('inclusionHeight', ''),
+            'Inclusion Height': transaction_data.get('creationHeight', ''),
             'Input Details': input_details,
             'Output Details': output_details
         }
