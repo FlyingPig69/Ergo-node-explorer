@@ -1,15 +1,55 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/style_sheet.css') }}"/>
-    <title>Blockchain Box Information</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style_sheet.css') }}" />
+    <style>
+        body {
+            margin: 0; /* Remove default margin to ensure the border spans the entire width */
+        }
+
+
+
+        .container {
+            margin-top: 100px; /* Add margin to the container to prevent overlap with the border */
+        }
+
+        .logo {
+            height: 100%; /* Make sure the logo takes the full height of the header */
+        }
+
+        .card-container {
+            margin-top: 100px;
+            text-align: center;
+            justify-content: center;
+            max-width: 400px;
+            width: 400px;
+            margin: 0 auto; /* Add this line to center the container horizontally */
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+        }
+
+        .card {
+            justify-content: center;
+            max-width: 500px;
+            width: 500px;
+            margin: 0 auto; /* Add this line to center the container horizontally */
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+            box-shadow: 1 4px 6px rgba(0, 0, 0, 0.5);
+        }
+
+        .card-text {
+            font-size: 24px;
+        }
+
+
+    </style>
 </head>
-
 <body>
-
        <div class="header">
         <b><a target="_self" href="{{flask_url}}"  style="color:white;">
         ⌂Node Explorer</a>
@@ -31,178 +71,66 @@
     </div> <!-- Black border/header -->
 
     <div class="container">
-        <h1 class="text-center">Box Contents</h1>
-        <div class="card">
-
-            <strong>URL:</strong>
-            <span id="boxId"><a href="{{ url }}">{{ url }}</span></a>
-            <button onclick="copyToClipboard('boxId')" class="clipboard-icon">📋</button><br><br>
 
 
-            <strong>Box ID:</strong><br>
-            <span id="boxId">{{ box_data.boxId }}</span>
-            <button onclick="copyToClipboard('boxId')" class="clipboard-icon">📋</button><br><br>
+<div class="white-text">
+  <br><br><br><br>
+  Alpha version, may crash at any point. <br>
+I initially built this to be able to inspect boxes without having to analyze json text ever time...<br>
+    Long-term plan is to add most features of the node API with outputs formatted for easy reading. <br>
+    Not intended to replace existing explorers.<br><br>
+    <i>- FlyingPig</i>
 
-            <strong>Erg in box:</strong><br>
-            <span id="boxId">{{ (box_data.value/1000000000) }}</span><br><br>
+  <br><br>
+</div>
 
-            <strong>Inclusion Height:</strong><br>
-            {{ box_data.inclusionHeight }}<br><br>
-
-            <strong>Creation Height:</strong><br>
-            {{ box_data.creationHeight }}<br><br>
-
-            <strong>Address:</strong><br>
-            <a href="https://explorer.ergoplatform.com/en/addresses/{{ box_data.address }}" id="address">{{ box_data.address }}</a>
-            <button onclick="copyToClipboard('address')" class="clipboard-icon">📋</button><br><br>
-
-            <strong>Ergotree:</strong><br>
-            <span id="ergoTree">{{ box_data.ergoTree }}</span>
-            <button onclick="copyToClipboard('ergoTree')" class="clipboard-icon">📋</button><br><br>
-
-            <strong>Spent Transaction ID:</strong>&nbsp;&nbsp; <span id="transactionId"><a
-                    href="{{ url_for('transaction_details', transaction_id=box_data.spentTransactionId) }}">{{ box_data.spentTransactionId }}</a></span>
-            <button onclick="copyToClipboard('transactionId')" class="clipboard-icon">📋</button><br>
-            <br>
-            {% if asset_details %}
-            <button class="toggle-assets" onclick="toggleAssets()">Show Tokens</button>
-            <button class="toggle-assets" onclick="toggleJson()">Show JSON</button>
-            <button class="toggle-assets" onclick="toggleRegisters()">Show Registers</button>
-            <div id="assets" style="display: none;">
-                <br>
-                {% if asset_details|length > 0 %}
-                <table>
-                    <thead>
-                        <tr>
-                            <th class="token-id">Token ID</th>
-                            <th class="token-name">Token Name</th>
-                            <th class="token-amount">Amount</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for asset in asset_details %}
-                        <tr>
-                            <td class="token-id"><span id="tokenId{{ asset.token_id }}">{{ asset.token_id }}</span>
-                                <button onclick="copyToClipboard('tokenId{{ asset.token_id }}')" class="clipboard-icon">📋</button></td>
-                            <td class="token-name"><b>{{ asset.token_name }}</b><br>
-                                <button class="toggle-description"
-                                    onclick="toggleDescription(this)">Description</button>
-                                <div class="description">{{ asset.description }}</div>
-                            </td>
-                            <td>{{ asset.amount }}</td>
-                        </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
-                {% else %}
-                <p>No assets in this box.</p>
-                {% endif %}
-                {% endif %}
+        <div class="card-container">
+            <div class="card">
+                <div class="card-body">
+                    <h2 class="card-title"><b>Node Name</b></h2>
+                    <p class="card-text">{{ info_data.name }}</p>
+                    <p class="card-text">{{ base_url }}</p>
+                </div>
             </div>
-            <div id="registers" style="display: none;">
-                {% if box_data.additionalRegisters %}
-                <h3>Additional Registers</h3>
-                {% if box_data.additionalRegisters|length > 0 %}
-                <ul>
-                    {% for key, value in box_data.additionalRegisters.items() %}
-                    <li><strong>{{ key }}:</strong> {{ value }}</li>
-                    {% endfor %}
-                </ul>
-                {% else %}
-                <p>No additional registers in this box.</p>
-                {% endif %}
-                {% endif %}
+            <!-- Card for Unconfirmed Count -->
+            <div class="card">
+                <div class="card-body">
+                    <h2 class="card-title"><b>TXs in Mempool</b></h2>
+                    <p class="card-text">{{ info_data.unconfirmedCount }}</p>
+                </div>
             </div>
-            <div id="json" style="display: none;">
-                <pre>{{ box_json }}</pre>
+
+            <!-- Card for Full Height -->
+            <div class="card">
+                <div class="card-body">
+                    <h2 class="card-title"><b>Full Height</b></h2>
+                    <p class="card-text">{{ info_data.fullHeight }}</p>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-body">
+                    <h2 class="card-title"><b>Difficulty</b></h2>
+                    <p class="card-text">{{ info_data.difficulty }}</p>
+                </div>
             </div>
         </div>
-    </div>
+    </div> <!-- Close the container div here -->
 
     <script>
-        function toggleDescription(button) {
-            var description = button.nextElementSibling;
-            description.style.display = (description.style.display === 'none' || description.style.display === '') ? 'block' : 'none';
-            button.textContent = (description.style.display === 'none' || description.style.display === '') ? 'Description' : 'Hide';
-        }
+        function validateForm() {
+            var searchText = document.getElementById('search_text').value;
 
-        function copyToClipboard(elementId) {
-            var textToCopy = document.getElementById(elementId).innerText;
-            var dummy = document.createElement("textarea");
-            document.body.appendChild(dummy);
-            dummy.value = textToCopy;
-            dummy.select();
-            document.execCommand("copy");
-            document.body.removeChild(dummy);
-        }
-
-        function toggleAssets() {
-            var assetsSection = document.getElementById("assets");
-            var button = document.querySelector(".toggle-assets");
-            if (assetsSection.style.display === 'none' || assetsSection.style.display === '') {
-                assetsSection.style.display = 'block';
-                button.textContent = 'Hide Tokens';
-            } else {
-                assetsSection.style.display = 'none';
-                button.textContent = 'Show Tokens';
+            // Check if the search text is empty
+            if (searchText.trim() === '') {
+                alert('Please enter a search term.');
+                return false; // Prevent form submission
             }
+
+            // If the search text is not empty, allow the form submission
+            return true;
         }
-
-        function toggleJson() {
-            var jsonSection = document.getElementById("json");
-            var jsonButton = document.querySelectorAll(".toggle-assets")[1]; // Select the second button
-            if (jsonSection.style.display === 'none' || jsonSection.style.display === '') {
-                jsonSection.style.display = 'block';
-                jsonButton.textContent = 'Hide JSON';
-            } else {
-                jsonSection.style.display = 'none';
-                jsonButton.textContent = 'Show JSON';
-            }
-        }
-
-        function toggleRegisters() {
-            var jsonSection = document.getElementById("registers");
-            var jsonButton = document.querySelectorAll(".toggle-assets")[2]; // Select the third button
-            if (jsonSection.style.display === 'none' || jsonSection.style.display === '') {
-                jsonSection.style.display = 'block';
-                jsonButton.textContent = 'Hide Registers';
-            } else {
-                jsonSection.style.display = 'none';
-                jsonButton.textContent = 'Show Registers';
-            }
-        }
-
-   function validateForm() {
-        var searchText = document.getElementById('search_text').value;
-
-        // Check if the search text is empty
-        if (searchText.trim() === '') {
-            alert('Please enter a search term.');
-            return false; // Prevent form submission
-        }
-
-        // If the search text is not empty, allow the form submission
-        return true;
-    }
-
-function openLinksInNewTab() {
-    var links = document.getElementsByTagName('a');
-    for (var i = 0; i < links.length; i++) {
-        // Check if the link should be excluded from opening in a new tab
-        var shouldExclude = links[i].classList.contains('exclude-new-tab');
-
-        // Set the target attribute only if it's not an excluded link
-        if (!shouldExclude) {
-            links[i].setAttribute('_self');
-        }
-    }
-}
-
-// Run the function when the page has finished loading
-window.onload = openLinksInNewTab;
 
     </script>
-
 </body>
-
 </html>
