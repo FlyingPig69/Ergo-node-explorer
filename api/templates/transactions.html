@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style_sheet.css') }}" />
+    <title>Blockchain Box Information</title>
+</head>
+
+<body>
+    <div class="header">
+        <b><a target="_self" href="{{flask_url}}"  style="color:white;">
+        ⌂Node Explorer</a>
+        </b>
+        <div class="search-card">
+            <form method="get" action="/search" onsubmit="return validateForm()" class="search-form">
+                <div class="flex-container">
+                    <input type="text" name="search_text" id="search_text" class="form-control custom-search-box" placeholder="Search text...">
+                    <select name="search_type" id="search_type" class="form-control custom-search-lov">
+                        <option value="box_id">Box ID</option>
+                        <option value="transaction_id">Transaction ID</option>
+                    </select>
+                </div>
+                <br>
+                <button type="submit" class="btn btn-dark custom-search-btn">Search</button>
+            </form>
+        </div>
+    </div> <!-- Black border/header -->
+
+    <div class="container">
+        <h1 class="text-center">Transaction Data</h1>
+        {% for transaction_id, transaction_data in transaction_details.items() %}
+        <div class="card mb-4">
+            <div class="card-header">
+
+
+
+                <b>Transaction ID:</b>
+                <span id="txid"><a href="{{ transaction_id }}">{{ transaction_id }}</span></a>
+                <button onclick="copyToClipboard('txid')" class="clipboard-icon">📋</button><br><br>
+
+
+                <b>Block:</b> {{ transaction_data['Inclusion Height'] }}
+                <br><br>
+            </div>
+            <div class="card-body">
+                <div class="column-container">
+                    <div class="column">
+                        <div class="table-card">
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th style="width: 55%;">Address</th>
+                                        <th style="width: 15%;">Value</th>
+                                        <th style="width: 30%;">Assets</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for input_asset in transaction_data['Input Details'] %}
+                                    <tr class="{% if loop.index > 5 %}hidden-row{% endif %}">
+
+
+                                        <td class="address">
+                                        <span id="addressid"><a href="https://explorer.ergoplatform.com/en/addresses/{{ input_asset['address'] }}">{{ input_asset['address']}}</span></a>
+                                        <button onclick="copyToClipboard('addressid')" class="clipboard-icon">📋</button><br><br>
+                                        </td>
+
+                                        <td>{{ input_asset['value'] }} ERG</td>
+                                        <td class="assets">
+                                            <button class="btn btn-primary btn-smaller expand-asset-button" onclick="toggleAssetBox(this)" {% if not input_asset['assets'] %}style="display: none;"{% endif %}>Show Assets</button>
+                                            <button class="btn btn-primary btn-smaller collapse-asset-button" style="display: none;" onclick="toggleAssetBox(this)">Hide Assets</button>
+                                            <div class="asset-box">
+                                                {% if input_asset['assets'] %}
+                                                    {% for asset in input_asset['assets'] %}
+                                                        {{ asset['token_name'] }}
+                                                        {% if asset['amount'] is defined %}
+                                                            {{ asset['amount'] }}
+                                                            {% if asset.get('decimals', 0) > 0 %}
+                                                                ({{ asset['amount'] / (10 ** asset['decimals']) }} {{ asset['token_name'] }})
+                                                            {% endif %}
+                                                        {% endif %}
+                                                        {% if asset['decimals'] is defined %}
+                                                            <br>Decimals: {{ asset['decimals'] }}
+                                                        {% endif %}
+                                                        {% if not loop.last %}<hr>{% endif %}
+                                                    {% endfor %}
+                                                {% else %}
+                                                    No tokens
+                                                {% endif %}
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                    {% if transaction_data['Input Details']|length > 5 %}
+                                    <tr>
+                                        <td>
+                                            <button class="btn btn-primary expand-button" onclick="toggleRows(this)">Expand All</button>
+                                        </td>
+                                    </tr>
+                                    {% endif %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+    <span class="large-arrow">🡇</span>
+
+
+                    <div class="column">
+                        <div class="table-card">
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th style="width: 55%;">Address</th>
+                                        <th style="width: 15%;">Value</th>
+                                        <th style="width: 30%;">Assets</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for output_asset in transaction_data['Output Details'] %}
+                                    <tr class="{% if loop.index > 5 %}hidden-row{% endif %}">
+
+
+
+                                        <td class="address">
+                                        <span id="addressid"><a href="https://explorer.ergoplatform.com/en/addresses/{{ output_asset['address'] }}">{{ output_asset['address']}}</span></a>
+                                        <button onclick="copyToClipboard('addressid')" class="clipboard-icon">📋</button><br><br>
+                                        </td>
+
+                                        <td>{{ output_asset['value'] }} ERG</td>
+                                        <td class="assets">
+                                            <button class="btn btn-primary btn-smaller expand-asset-button" onclick="toggleAssetBox(this)" {% if not output_asset['assets'] %}style="display: none;"{% endif %}>Show Assets</button>
+                                            <button class="btn btn-primary btn-smaller collapse-asset-button" style="display: none;" onclick="toggleAssetBox(this)">Hide Assets</button>
+                                            <div class="asset-box">
+                                                {% if output_asset['assets'] %}
+                                                    {% for asset in output_asset['assets'] %}
+                                                        {{ asset['token_name'] }}
+                                                        {% if asset['amount'] is defined %}
+                                                            {{ asset['amount'] }}
+                                                            {% if asset.get('decimals', 0) > 0 %}
+                                                                ({{ asset['amount'] / (10 ** asset['decimals']) }} {{ asset['token_name'] }})
+                                                            {% endif %}
+                                                        {% endif %}
+                                                        {% if asset['decimals'] is defined %}
+                                                            <br>Decimals: {{ asset['decimals'] }}
+                                                        {% endif %}
+                                                        {% if not loop.last %}<hr>{% endif %}
+                                                    {% endfor %}
+                                                {% else %}
+                                                    No tokens
+                                                {% endif %}
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                    {% if transaction_data['Output Details']|length > 5 %}
+                                    <tr>
+                                        <td>
+                                            <button class="btn btn-primary expand-button" onclick="toggleRows(this)">Expand All</button>
+                                        </td>
+                                    </tr>
+                                    {% endif %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+    <div class="asset-popup" id="asset-popup">
+        <div class="asset-popup-content">
+            <button class="close-button" onclick="closeAssetPopup()">&times;</button>
+            <div class="asset-content">
+                <!-- Asset content goes here -->
+            </div>
+        </div>
+    </div>
+
+
+
+    <script>
+        function toggleRows(button) {
+            var table = button.closest('table');
+            var rows = table.querySelectorAll('.hidden-row');
+            var isVisible = rows[0].style.display === 'none' || !rows[0].style.display;
+
+            for (var i = 0; i < rows.length; i++) {
+                rows[i].style.display = isVisible ? 'table-row' : 'none';
+            }
+
+            button.textContent = isVisible ? 'Collapse All' : 'Expand All';
+        }
+
+function toggleAssetBox(button) {
+    var assetsCell = button.closest('td');
+    var assetBox = assetsCell.querySelector('.asset-box');
+    var isVisible = assetBox.style.display === 'none' || assetBox.style.display === '';
+
+    if (isVisible) {
+        // Show the asset box
+        assetBox.style.display = 'block';
+    } else {
+        // Hide the asset box
+        assetBox.style.display = 'none';
+    }
+
+    var expandButton = assetsCell.querySelector('.expand-asset-button');
+    var collapseButton = assetsCell.querySelector('.collapse-asset-button');
+
+    expandButton.style.display = isVisible ? 'none' : 'inline';
+    collapseButton.style.display = isVisible ? 'inline' : 'none';
+
+    // Optional: Trigger a reflow to force the browser to repaint and apply styles immediately
+    // This can help with some browsers not immediately rendering the changes
+    void assetBox.offsetWidth;
+}
+
+    function copyToClipboard(elementId) {
+        var textToCopy = document.getElementById(elementId).innerText;
+        var dummy = document.createElement("textarea");
+        document.body.appendChild(dummy);
+        dummy.value = textToCopy;
+        dummy.select();
+        document.execCommand("copy");
+        document.body.removeChild(dummy);
+    }
+
+    </script>
+
+</body>
+
+</html>

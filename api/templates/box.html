@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style_sheet.css') }}"/>
+    <title>Blockchain Box Information</title>
+</head>
+
+<body>
+
+       <div class="header">
+        <b><a target="_self" href="{{flask_url}}"  style="color:white;">
+        ⌂Node Explorer</a>
+        </b>
+            <div class="search-card">
+                <form method="get" action="/search" onsubmit="return validateForm()" class="search-form">
+                    <div class="flex-container">
+                        <input type="text" name="search_text" id="search_text" class="form-control custom-search-box" placeholder="Search text...">
+                        <select name="search_type" id="search_type" class="form-control custom-search-lov">
+                            <option value="box_id">Box ID</option>
+                            <option value="transaction_id">Transaction ID</option>
+                        </select>
+                    </div>
+                    <br>
+                    <button type="submit" class="btn btn-dark custom-search-btn">Search</button>
+                </form>
+            </div>
+
+    </div> <!-- Black border/header -->
+
+    <div class="container">
+        <h1 class="text-center">Box Contents</h1>
+        <div class="card">
+
+            <strong>URL:</strong>
+            <span id="boxId"><a href="{{ url }}">{{ url }}</span></a>
+            <button onclick="copyToClipboard('boxId')" class="clipboard-icon">📋</button><br><br>
+
+
+            <strong>Box ID:</strong><br>
+            <span id="boxId">{{ box_data.boxId }}</span>
+            <button onclick="copyToClipboard('boxId')" class="clipboard-icon">📋</button><br><br>
+
+            <strong>Erg in box:</strong><br>
+            <span id="boxId">{{ (box_data.value/1000000000) }}</span><br><br>
+
+            <strong>Inclusion Height:</strong><br>
+            {{ box_data.inclusionHeight }}<br><br>
+
+            <strong>Address:</strong><br>
+            <a href="https://explorer.ergoplatform.com/en/addresses/{{ box_data.address }}" id="address">{{ box_data.address }}</a>
+            <button onclick="copyToClipboard('address')" class="clipboard-icon">📋</button><br><br>
+
+            <strong>Ergotree:</strong><br>
+            <span id="ergoTree">{{ box_data.ergoTree }}</span>
+            <button onclick="copyToClipboard('ergoTree')" class="clipboard-icon">📋</button><br><br>
+
+            <strong>Spent Transaction ID:</strong>&nbsp;&nbsp; <span id="transactionId"><a
+                    href="{{ url_for('transaction_details', transaction_id=box_data.spentTransactionId) }}">{{ box_data.spentTransactionId }}</a></span>
+            <button onclick="copyToClipboard('transactionId')" class="clipboard-icon">📋</button><br>
+            <br>
+            {% if asset_details %}
+            <button class="toggle-assets" onclick="toggleAssets()">Show Tokens</button>
+            <button class="toggle-assets" onclick="toggleJson()">Show JSON</button>
+            <button class="toggle-assets" onclick="toggleRegisters()">Show Registers</button>
+            <div id="assets" style="display: none;">
+                <br>
+                {% if asset_details|length > 0 %}
+                <table>
+                    <thead>
+                        <tr>
+                            <th class="token-id">Token ID</th>
+                            <th class="token-name">Token Name</th>
+                            <th class="token-amount">Amount</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for asset in asset_details %}
+                        <tr>
+                            <td class="token-id"><span id="tokenId{{ asset.token_id }}">{{ asset.token_id }}</span>
+                                <button onclick="copyToClipboard('tokenId{{ asset.token_id }}')" class="clipboard-icon">📋</button></td>
+                            <td class="token-name"><b>{{ asset.token_name }}</b><br>
+                                <button class="toggle-description"
+                                    onclick="toggleDescription(this)">Description</button>
+                                <div class="description">{{ asset.description }}</div>
+                            </td>
+                            <td>{{ asset.amount }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+                {% else %}
+                <p>No assets in this box.</p>
+                {% endif %}
+                {% endif %}
+            </div>
+            <div id="registers" style="display: none;">
+                {% if box_data.additionalRegisters %}
+                <h3>Additional Registers</h3>
+                {% if box_data.additionalRegisters|length > 0 %}
+                <ul>
+                    {% for key, value in box_data.additionalRegisters.items() %}
+                    <li><strong>{{ key }}:</strong> {{ value }}</li>
+                    {% endfor %}
+                </ul>
+                {% else %}
+                <p>No additional registers in this box.</p>
+                {% endif %}
+                {% endif %}
+            </div>
+            <div id="json" style="display: none;">
+                <pre>{{ box_json }}</pre>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function toggleDescription(button) {
+            var description = button.nextElementSibling;
+            description.style.display = (description.style.display === 'none' || description.style.display === '') ? 'block' : 'none';
+            button.textContent = (description.style.display === 'none' || description.style.display === '') ? 'Description' : 'Hide';
+        }
+
+        function copyToClipboard(elementId) {
+            var textToCopy = document.getElementById(elementId).innerText;
+            var dummy = document.createElement("textarea");
+            document.body.appendChild(dummy);
+            dummy.value = textToCopy;
+            dummy.select();
+            document.execCommand("copy");
+            document.body.removeChild(dummy);
+        }
+
+        function toggleAssets() {
+            var assetsSection = document.getElementById("assets");
+            var button = document.querySelector(".toggle-assets");
+            if (assetsSection.style.display === 'none' || assetsSection.style.display === '') {
+                assetsSection.style.display = 'block';
+                button.textContent = 'Hide Tokens';
+            } else {
+                assetsSection.style.display = 'none';
+                button.textContent = 'Show Tokens';
+            }
+        }
+
+        function toggleJson() {
+            var jsonSection = document.getElementById("json");
+            var jsonButton = document.querySelectorAll(".toggle-assets")[1]; // Select the second button
+            if (jsonSection.style.display === 'none' || jsonSection.style.display === '') {
+                jsonSection.style.display = 'block';
+                jsonButton.textContent = 'Hide JSON';
+            } else {
+                jsonSection.style.display = 'none';
+                jsonButton.textContent = 'Show JSON';
+            }
+        }
+
+        function toggleRegisters() {
+            var jsonSection = document.getElementById("registers");
+            var jsonButton = document.querySelectorAll(".toggle-assets")[2]; // Select the third button
+            if (jsonSection.style.display === 'none' || jsonSection.style.display === '') {
+                jsonSection.style.display = 'block';
+                jsonButton.textContent = 'Hide Registers';
+            } else {
+                jsonSection.style.display = 'none';
+                jsonButton.textContent = 'Show Registers';
+            }
+        }
+
+   function validateForm() {
+        var searchText = document.getElementById('search_text').value;
+
+        // Check if the search text is empty
+        if (searchText.trim() === '') {
+            alert('Please enter a search term.');
+            return false; // Prevent form submission
+        }
+
+        // If the search text is not empty, allow the form submission
+        return true;
+    }
+
+function openLinksInNewTab() {
+    var links = document.getElementsByTagName('a');
+    for (var i = 0; i < links.length; i++) {
+        // Check if the link should be excluded from opening in a new tab
+        var shouldExclude = links[i].classList.contains('exclude-new-tab');
+
+        // Set the target attribute only if it's not an excluded link
+        if (!shouldExclude) {
+            links[i].setAttribute('_self');
+        }
+    }
+}
+
+// Run the function when the page has finished loading
+window.onload = openLinksInNewTab;
+
+    </script>
+
+</body>
+
+</html>

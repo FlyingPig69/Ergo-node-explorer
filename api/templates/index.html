@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style_sheet.css') }}" />
+    <style>
+        body {
+            margin: 0; /* Remove default margin to ensure the border spans the entire width */
+        }
+
+
+
+        .container {
+            margin-top: 100px; /* Add margin to the container to prevent overlap with the border */
+        }
+
+        .logo {
+            height: 100%; /* Make sure the logo takes the full height of the header */
+        }
+
+        .card-container {
+            margin-top: 100px;
+            text-align: center;
+            justify-content: center;
+            max-width: 400px;
+            width: 400px;
+            margin: 0 auto; /* Add this line to center the container horizontally */
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+        }
+
+        .card {
+            justify-content: center;
+            max-width: 500px;
+            width: 500px;
+            margin: 0 auto; /* Add this line to center the container horizontally */
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+            box-shadow: 1 4px 6px rgba(0, 0, 0, 0.5);
+        }
+
+        .card-text {
+            font-size: 24px;
+        }
+    </style>
+</head>
+<body>
+       <div class="header">
+        <b><a target="_self" href="{{flask_url}}"  style="color:white;">
+        ⌂Node Explorer</a>
+        </b>
+            <div class="search-card">
+                <form method="get" action="/search" onsubmit="return validateForm()" class="search-form">
+                    <div class="flex-container">
+                        <input type="text" name="search_text" id="search_text" class="form-control custom-search-box" placeholder="Search text...">
+                        <select name="search_type" id="search_type" class="form-control custom-search-lov">
+                            <option value="box_id">Box ID</option>
+                            <option value="transaction_id">Transaction ID</option>
+                        </select>
+                    </div>
+                    <br>
+                    <button type="submit" class="btn btn-dark custom-search-btn">Search</button>
+                </form>
+            </div>
+
+    </div> <!-- Black border/header -->
+
+    <div class="container">
+          <br><br><br><br><br><br><br>
+        <div class="card-container">
+            <div class="card">
+                <div class="card-body">
+                    <h2 class="card-title"><b>Node Name</b></h2>
+                    <p class="card-text">{{ info_data.name }}</p>
+                </div>
+            </div>
+            <!-- Card for Unconfirmed Count -->
+            <div class="card">
+                <div class="card-body">
+                    <h2 class="card-title"><b>TXs in Mempool</b></h2>
+                    <p class="card-text">{{ info_data.unconfirmedCount }}</p>
+                </div>
+            </div>
+
+            <!-- Card for Full Height -->
+            <div class="card">
+                <div class="card-body">
+                    <h2 class="card-title"><b>Full Height</b></h2>
+                    <p class="card-text">{{ info_data.fullHeight }}</p>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-body">
+                    <h2 class="card-title"><b>Difficulty</b></h2>
+                    <p class="card-text">{{ info_data.difficulty }}</p>
+                </div>
+            </div>
+        </div>
+    </div> <!-- Close the container div here -->
+
+    <script>
+        function validateForm() {
+            var searchText = document.getElementById('search_text').value;
+
+            // Check if the search text is empty
+            if (searchText.trim() === '') {
+                alert('Please enter a search term.');
+                return false; // Prevent form submission
+            }
+
+            // If the search text is not empty, allow the form submission
+            return true;
+        }
+
+    </script>
+</body>
+</html>
