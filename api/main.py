@@ -7,7 +7,7 @@ app = Flask(__name__)
 # Define the base URL
 #base_url = 'http://192.168.0.20:9050'
 base_url= 'http://213.239.193.208:9053'
-flask_url = 'http://192.168.0.20:5000'
+flask_url = 'https://ergo-node-explorer-o973a7eu9-flying-pigs-projects.vercel.app'
 
 # Define specific paths
 transaction_path = '/blockchain/transaction/'
