@@ -1,0 +1,326 @@
+body {
+    background-color: #073673;
+    display: flex;
+    justify-content: center;
+    min-height: 100vh;
+    margin: 0;
+}
+
+h1 {
+    text-align: center;
+    color: #ffffff;
+    padding: 5px;
+}
+
+.large-arrow {
+    font-size: 4em; /* Adjust the size as needed */
+    text-align: center;
+    display: block;
+    margin: 0 auto;
+}
+
+.card {
+    max-width: 1150px;
+    width:1150px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    white-space: wrap;
+    word-wrap: break-word;
+    padding: 20px;
+    margin: 20px;
+    border-radius: 8px;
+    background-color: #ffffff;
+    text-align: left;
+    justify-content: left;
+}
+
+.title {
+    font-size: 24px;
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+
+table {
+    width: 100%;
+    font-size: 16px;
+    border-collapse: collapse;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+}
+
+th {
+    background-color: #073673;
+    font-size: 16px;
+    font-weight: bold;
+    color: #fff;
+}
+
+th,
+td {
+    border: 1px solid #ddd;
+    padding: 8px;
+    text-align: left;
+}
+
+.hidden-row {
+    display: none;
+}
+
+/* these are the buttons on the box.html page */
+.toggle-assets {
+    cursor: pointer;
+    color: #ffffff;
+    width:100px;
+    background-color: #073673;
+    padding: 16px 16px;
+    border: none;
+    border-radius: 5px;
+    font-size: 14px;
+}
+
+.toggle-description {
+    cursor: pointer;
+    color: #ffffff;
+    width:100px;
+    background-color: #073673;
+    padding: 5px 5px;
+    border: none;
+    border-radius: 5px;
+    font-size: 12px;
+}
+
+.description {
+    max-width: 800px;
+    display: none;
+}
+
+a {
+    color: blue;
+    text-decoration: none;
+}
+#json {
+    overflow-wrap: break-word;
+    word-wrap: break-word;
+}
+
+#json pre {
+    white-space: pre-wrap;
+    max-width: 100%;
+}
+
+
+.token-name {
+    width: 400px;
+    max-width: 400px;
+}
+
+.token-id {
+    overflow: hidden;
+    width: 500px;
+    max-width: 500px;
+}
+
+.token-amount {
+    width: 50px;
+    max-width: 50px;
+}
+
+.search-container {
+    text-align: center;
+    justify-content: center;
+    width:1200px;
+    max-width: 1200px;
+    background-color: #ecf0f1;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+.container {
+    margin-top: 150px;
+    justify-content: center;
+
+}
+
+.table-card .address {
+    max-width: 200px; /* Adjust the max-width as needed */
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.search-card {
+    justify-content: center;
+    text-align:center;
+    height: 80px;
+    font-size: 12px;
+    margin: 0 auto; /* This centers the container */
+    width:1150px;
+    max-width: 1150px;
+    background-color: #eeeeee;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.flex-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.custom-search-box,
+.custom-search-lov {
+    flex: 1;
+    margin-right: 10px;
+    border: none; /* Remove borders */
+    border-radius: 5px; /* Add border-radius for a subtle curve */
+    background-color: #fffff; /* Light grey background color */
+    padding: 10px; /* Add padding for spacing inside the input and select */
+}
+.custom-search-lov {
+    flex: 1; /* Takes up 1 times the space */
+}
+
+.custom-search-btn {
+    flex: 0.25; /* Takes up 1 times the space */
+}
+
+button.clipboard-icon {
+    font-size: 0.6em;
+    background-color: transparent;
+    border: none;
+    cursor: pointer;
+    vertical-align: top;
+}
+
+.hidden-row {
+    display: none;
+}
+
+.asset-box {
+    display: none;
+    background-color: #ffffff;
+    border-radius: 1px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+    padding: 2px;
+    max-width: 200px;
+    width:200px;
+    max-height: 0;     /* Initially hide the asset box */
+    transition: max-height 0.3s ease;  /* Add a smooth transition effect */
+    max-height: 150px; /* Set a fixed maximum height for the asset box */
+    overflow-y: auto;  /* Add a scrollbar if the content exceeds the max height */
+}
+}
+}
+
+.asset {
+    width:10px;
+    max-width:10px;
+}
+
+
+.btn-smaller {
+    cursor: pointer;
+    color: #ffffff;
+    width:100px;
+    background-color: #073673;
+    padding: 5px 10px;
+    border: none;
+    border-radius: 4px;
+    font-size: 12px;
+}
+
+.asset-popup {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1;
+    width: 50px;
+}
+
+.header {
+    background-color: black;
+    text-align: center;
+    height: 100px;
+    width: 100%;
+    position: fixed; /* Fixed position to keep the border at the top */
+    top: 0; /* Stick to the top of the viewport */
+    z-index: 1000; /* Ensure it's above other elements on the page */
+    color: white;
+    font-size: 36px;
+}
+
+.asset-popup-content {
+    top: 50%;
+    left: 100%;
+    padding: 20px;
+    width:50px;
+    color:white;
+    border: 1px solid #00000;
+    border-radius: 10px;
+    background-color: #007BFF;
+}
+
+.close-button {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    font-size: 20px;
+    background: none;
+    border: none;
+    cursor: pointer;
+}
+
+#json,
+#json pre {
+    overflow-wrap: break-word;
+    word-wrap: break-word;
+}
+
+.custom-search-btn {
+    background-color: #007BFF;
+    font-size: 18px;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.custom-search-box {
+    width: 500px;
+    font-size: 15px;
+}
+
+.custom-search-lov {
+    width: 150px;
+    font-size: 15px;
+}
+
+#json {
+    overflow-wrap: break-word;
+    word-wrap: break-word;
+}
+
+#json pre {
+    white-space: pre-wrap;
+    max-width: 100%; /* Ensure the content doesn't overflow the container */
+}
+
+.custom-search-btn {
+    background-color: #007BFF; /* Blue color, you can change it to your preferred color */
+    font-size: 16px;
+    color: white;
+    border: none;
+    padding: 10px 20px; /* Adjust padding as needed */
+    border-radius: 5px; /* Add rounded corners */
+    cursor: pointer;
+    transition: background-color 0.3s ease; /* Smooth color transition on hover */
+
+}
+.custom-search-btn:hover {
+    background-color: #0056b3;
+}
+
