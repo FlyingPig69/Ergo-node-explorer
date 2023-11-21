@@ -5,8 +5,9 @@ import json
 app = Flask(__name__)
 
 # Define the base URL
+#base_url = 'http://192.168.0.20:9050'
 base_url= 'http://213.239.193.208:9053'
-flask_url = 'https://ergo-node-explorer.vercel.app'
+flask_url = 'http://192.168.0.20:5000'
 
 # Define specific paths
 transaction_path = '/blockchain/transaction/'
@@ -77,7 +78,7 @@ def index():
         info_data = info.json()
     #print("info is",info_url)
 
-    return render_template('index.html', info_data=info_data, url=info_url,flask_url=flask_url)
+    return render_template('index.html', info_data=info_data, url=info_url,flask_url=flask_url,base_url=base_url)
 
 
 @app.route('/transaction_details/<transaction_id>')
@@ -153,4 +154,4 @@ def search_transaction():
 
 
 if __name__ == '__main__':
-    app.run(host="0.0.0.0", debug=False, threaded=True)
+    app.run(host="0.0.0.0", debug=True, threaded=True)
