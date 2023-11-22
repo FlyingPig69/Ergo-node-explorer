@@ -15,20 +15,19 @@
         ⌂Node Explorer</a>
         </b>
             <div class="search-card">
-                <form method="get" action="/search" onsubmit="return validateForm()" class="search-form">
-                    <div class="flex-container">
-                        <input type="text" name="search_text" id="search_text" class="form-control custom-search-box" placeholder="Search text...">
-                        <select name="search_type" id="search_type" class="form-control custom-search-lov">
-                            <option value="box_id">Box ID</option>
-                            <option value="transaction_id">Transaction ID</option>
-                        </select>
-                    </div>
-                    <br>
+            <form method="get" action="/search" onsubmit="return validateForm()" class="search-form">
+                <div class="flex-container">
+                    <input type="text" name="search_text" id="search_text" class="form-control custom-search-box" placeholder="Search text...">
+                    <select name="search_type" id="search_type" class="form-control custom-search-lov">
+                        <option value="box_id">Box ID</option>
+                        <option value="transaction_id">Transaction ID</option>
+                    </select>
                     <button type="submit" class="btn btn-dark custom-search-btn">Search</button>
-                </form>
-            </div>
-
-    </div> <!-- Black border/header -->
+                </div>
+                <br>
+            </form>
+        </div>
+    </div>
 
     <div class="container">
         <h1 class="text-center">Box Contents</h1>
