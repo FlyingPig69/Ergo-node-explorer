@@ -41,8 +41,9 @@
                 <span id="txid"><a href="{{ transaction_id }}">{{ transaction_id }}</span></a>
                 <button onclick="copyToClipboard('txid')" class="clipboard-icon">📋</button><br><br>
 
-
-                <b>Block:</b> {{ transaction_data['Inclusion Height'] }}
+                <b>Inclusion Height:</b> {{ transaction_data['inclusionHeight']}}<br>
+                <b>Creation Height:</b> {{ transaction_data['creationHeight']}}<br><br>
+                Transaction took <b>{{ transaction_data['inclusionHeight'] - transaction_data['creationHeight'] }} blocks</b> to get confirmed
                 <br><br>
             </div>
             <div class="card-body">
@@ -215,7 +216,8 @@ function toggleAssetBox(button) {
     expandButton.style.display = isVisible ? 'none' : 'inline';
     collapseButton.style.display = isVisible ? 'inline' : 'none';
 
-
+    // Optional: Trigger a reflow to force the browser to repaint and apply styles immediately
+    // This can help with some browsers not immediately rendering the changes
     void assetBox.offsetWidth;
 }
 
