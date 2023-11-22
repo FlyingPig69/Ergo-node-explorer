@@ -6,17 +6,17 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style_sheet.css') }}" />
     <style>
         body {
-            margin: 0; /* Remove default margin to ensure the border spans the entire width */
+            margin: 0;
         }
 
 
 
         .container {
-            margin-top: 100px; /* Add margin to the container to prevent overlap with the border */
+            margin-top: 100px; 
         }
 
         .logo {
-            height: 100%; /* Make sure the logo takes the full height of the header */
+            height: 100%; 
         }
 
         .card-container {
@@ -25,7 +25,7 @@
             justify-content: center;
             max-width: 400px;
             width: 400px;
-            margin: 0 auto; /* Add this line to center the container horizontally */
+            margin: 0 auto; 
             display: grid;
             grid-template-columns: repeat(2, 1fr);
             gap: 20px;
@@ -35,7 +35,7 @@
             justify-content: center;
             max-width: 500px;
             width: 500px;
-            margin: 0 auto; /* Add this line to center the container horizontally */
+            margin: 0 auto; 
             display: grid;
             grid-template-columns: repeat(2, 1fr);
             gap: 20px;
@@ -62,14 +62,14 @@
                         <option value="box_id">Box ID</option>
                         <option value="transaction_id">Transaction ID</option>
                     </select>
-                    <!-- Add the search button here -->
+
                     <button type="submit" class="btn btn-dark custom-search-btn">Search</button>
                 </div>
                 <br>
             </form>
         </div>
 
-    </div> <!-- Black border/header -->
+    </div> 
 
     <div class="container">
 
@@ -118,7 +118,7 @@
                 </div>
             </div>
         </div>
-    </div> <!-- Close the container div here -->
+    </div> 
 
     <script>
         function validateForm() {
