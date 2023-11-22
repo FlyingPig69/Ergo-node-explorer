@@ -1,9 +1,6 @@
 {
   "rewrites": [
-    { "source": "/(.*)", "destination": "/api/main" }
-  ]
-}
-
-{
+    { "source": "/(.*)", "destination": "/api/main" },
   "regions": ["fra1"]
+  ]
 }
