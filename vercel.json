@@ -3,3 +3,7 @@
     { "source": "/(.*)", "destination": "/api/main" }
   ]
 }
+
+{
+  "regions": ["fra1"]
+}
