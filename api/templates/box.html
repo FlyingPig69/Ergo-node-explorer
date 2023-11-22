@@ -60,10 +60,18 @@
             <span id="ergoTree">{{ box_data.ergoTree }}</span>
             <button onclick="copyToClipboard('ergoTree')" class="clipboard-icon">📋</button><br><br>
 
-            <strong>Spent Transaction ID:</strong>&nbsp;&nbsp; <span id="transactionId"><a
-                    href="{{ url_for('transaction_details', transaction_id=box_data.spentTransactionId) }}">{{ box_data.spentTransactionId }}</a></span>
-            <button onclick="copyToClipboard('transactionId')" class="clipboard-icon">📋</button><br>
-            <br>
+            <strong>Spent Transaction ID:</strong>&nbsp;&nbsp; <span id="transactionId">
+            <span id="transactionId">
+                {% if box_data.spentTransactionId %}
+                    <a href="{{ url_for('transaction_details', transaction_id=box_data.spentTransactionId) }}">
+                        {{ box_data.spentTransactionId }}
+                    </a>
+                {% else %}
+                    Unspent
+                {% endif %}
+</span>
+<button onclick="copyToClipboard('transactionId')" class="clipboard-icon">📋</button><br>
+<br>
             {% if asset_details %}
             <button class="toggle-assets" onclick="toggleAssets()">Show Tokens</button>
             <button class="toggle-assets" onclick="toggleJson()">Show JSON</button>
@@ -200,6 +208,8 @@ function openLinksInNewTab() {
 
 // Run the function when the page has finished loading
 window.onload = openLinksInNewTab;
+
+
 
     </script>
 
