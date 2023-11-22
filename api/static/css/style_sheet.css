@@ -93,7 +93,7 @@ td {
 }
 
 a {
-    color: blue;
+    color: #3366ff;
     text-decoration: none;
 }
 #json {
@@ -151,21 +151,20 @@ a {
 }
 
 .search-card {
-    justify-content: center;
-    text-align:center;
-    height: 80px;
+    justify-content:left;
+    text-align:left;
+    height: 45px;
     font-size: 12px;
     margin: 0 auto; /* This centers the container */
     width:1150px;
     max-width: 1150px;
     background-color: #eeeeee;
-    padding: 20px;
+    padding: 10px;
     border-radius: 10px;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
 .flex-container {
-    display: flex;
     justify-content: space-between;
     align-items: center;
 }
@@ -252,7 +251,7 @@ button.clipboard-icon {
     top: 0; /* Stick to the top of the viewport */
     z-index: 1000; /* Ensure it's above other elements on the page */
     color: white;
-    font-size: 36px;
+    font-size: 48px;
 }
 
 .asset-popup-content {
@@ -294,12 +293,14 @@ button.clipboard-icon {
 }
 
 .custom-search-box {
-    width: 500px;
+    width: 800px;
+    max-width:800px;
     font-size: 15px;
 }
 
 .custom-search-lov {
-    width: 150px;
+    width: 200px;
+    max-width:200px
     font-size: 15px;
 }
 
