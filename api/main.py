@@ -62,10 +62,10 @@ def process_transaction(transaction_id):
 
         return {
             'Transaction ID': transaction_id,
-            'Inclusion Height': transaction_data.get('inclusionHeight', ''),
-            'Inclusion Height': transaction_data.get('creationHeight', ''),
+            'inclusionHeight': transaction_data.get('inclusionHeight', 'inclusionHeight'),
+            'creationHeight': transaction_data["outputs"][0]["creationHeight"],
             'Input Details': input_details,
-            'Output Details': output_details
+            'Output Details': output_details,
         }
     else:
         return None
@@ -87,7 +87,7 @@ def transaction_details(transaction_id):
     transaction_data = process_transaction(transaction_id)
 
     if transaction_data:
-        return render_template('transactions.html', transaction_details={transaction_id: transaction_data},flask_url=flask_url)
+        return render_template('transactions.html', transaction_details={transaction_id: transaction_data}, flask_url=flask_url)
     else:
         return "Failed to retrieve transaction details."
 
@@ -109,7 +109,7 @@ def box_details(box_id):
         box_json=json.dumps(box_data, indent=4)
 
         if box_data:
-            return render_template('box.html', box_data=box_data, asset_details=asset_details, box_json=box_json, url=url,flask_url=flask_url)
+            return render_template('box.html', box_data=box_data, asset_details=asset_details, box_json=box_json, url=url, flask_url=flask_url)
 
     except Exception as e:
         error_message = "An error occurred: {}".format(e)
@@ -155,4 +155,4 @@ def search_transaction():
 
 
 if __name__ == '__main__':
-    app.run(host="0.0.0.0", debug=False, threaded=True)
+    app.run(host="0.0.0.0", debug=True, threaded=True)
