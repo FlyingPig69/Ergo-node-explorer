@@ -146,13 +146,13 @@
         <!-- Card below with Latest Blocks -->
         <div class="card-body-bottom">
             <h2><b>Latest Blocks</b></h2>
-            <table style="border-collapse: collapse; width: 500px; box-shadow: none; margin: 0 auto;">
+            <table style="border-collapse: collapse; width: 520px; box-shadow: none; margin: 0 auto;">
                 <tbody>
                     {% for header_id in header_id %}
                     <tr>
                         <td style="width: 75px; border: none; font-size: 20px; text-align: left;"><a href="{{flask_url}}/blocks/{{header_id}}">{{ height[loop.index0] }}</a></td>
                         <td style="width: 200px; border: none; font-size: 20px; text-align: left;">{{no_txs[loop.index0]}} Transactions</td>
-                        <td style="width: 225px; border: none; font-size: 20px; text-align: left;"><span id="timestamp_{{loop.index0}}">{{timestamp[loop.index0]}}</span></td>
+                        <td style="width: 250px; border: none; font-size: 20px; text-align: left;"><span id="timestamp_{{loop.index0}}">{{timestamp[loop.index0]}}</span></td>
                     </tr>
                     {% endfor %}
                 </tbody>
