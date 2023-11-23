@@ -35,8 +35,6 @@
         <div class="card mb-4">
             <div class="card-header">
 
-
-
                 <b>Transaction ID:</b>
                 <span id="txid"><a href="{{ transaction_id }}">{{ transaction_id }}</span></a>
                 <button onclick="copyToClipboard('txid')" class="clipboard-icon">📋</button><br><br>
@@ -63,10 +61,18 @@
                                     <tr class="{% if loop.index > 5 %}hidden-row{% endif %}">
 
 
-                                        <td class="address">
-                                        <span id="addressid"><a href="https://explorer.ergoplatform.com/en/addresses/{{ input_asset['address'] }}">{{ input_asset['address']}}</span></a>
-                                        <button onclick="copyToClipboard('addressid')" class="clipboard-icon">📋</button><br><br>
-                                        </td>
+                                <td class="address">
+                                  <span id="addressid">
+                                    <a href="https://explorer.ergoplatform.com/en/addresses/{{ input_asset['address'] }}">{{ input_asset['address']}}</a>
+                                  </span>
+                                  <button onclick="copyToClipboard('addressid')" class="clipboard-icon">📋</button><br>
+
+                                  BoxId: <a href="{{flask_url}}/boxid/{{ input_asset['box_id']}}">
+                                    <span id="box_id" style="font-size: smaller;">{{ input_asset['box_id']}}</span>
+                                  </a>
+                                  <button onclick="copyToClipboard('box_id')" class="clipboard-icon">📋</button><br>
+                                </td>
+
 
                                         <td>{{ input_asset['value'] }} ERG</td>
                                         <td class="assets">
@@ -127,8 +133,13 @@
 
                                         <td class="address">
                                         <span id="addressid"><a href="https://explorer.ergoplatform.com/en/addresses/{{ output_asset['address'] }}">{{ output_asset['address']}}</span></a>
-                                        <button onclick="copyToClipboard('addressid')" class="clipboard-icon">📋</button><br><br>
+                                        <button onclick="copyToClipboard('addressid')" class="clipboard-icon">📋</button><br>
+                                        BoxId: <a href="{{flask_url}}/boxid/{{ output_asset['box_id']}}">
+                                        <span id="box_id" style="font-size: smaller;">{{ output_asset['box_id']}}</span>
+                                        </a>
+
                                         </td>
+
 
                                         <td>{{ output_asset['value'] }} ERG</td>
                                         <td class="assets">
