@@ -1,20 +1,22 @@
 from flask import Flask, render_template, request, redirect, url_for
 import requests
+from datetime import datetime
 import json
 
 app = Flask(__name__)
 
 # Define the base URL
-#base_url = 'http://192.168.0.20:9050'
 base_url= 'http://213.239.193.208:9053'
-flask_url = 'https://ergo-node-explorer.vercel.app'
+flask_url = 'https://ergo-node-explorer.vercel.app/'
 
 # Define specific paths
 transaction_path = '/blockchain/transaction/'
 token_path = '/blockchain/token/'
 address_path = '/blockchain/transaction/byAddress/'
 box_path = '/blockchain/box/'
+indexed_path='/blockchain/indexedHeight'
 info_path ='/info'
+block_path = '/blocks/'
 
 def get_url(endpoint):
     return base_url + endpoint
@@ -52,7 +54,8 @@ def process_transaction(transaction_id):
                 item_details = {
                     'address': data_item['address'],
                     'value': round(data_item['value'] / 1000000000, 4),
-                    'assets': process_assets(assets)
+                    'assets': process_assets(assets),
+                    'box_id': data_item['boxId']
                 }
                 details.append(item_details)
             return details
@@ -66,6 +69,7 @@ def process_transaction(transaction_id):
             'creationHeight': transaction_data["outputs"][0]["creationHeight"],
             'Input Details': input_details,
             'Output Details': output_details,
+            'tx_json': transaction_data
         }
     else:
         return None
@@ -77,9 +81,35 @@ def index():
     info = requests.get(info_url)
     if info.status_code == 200:
         info_data = info.json()
-    #print("info is",info_url)
 
-    return render_template('index.html', info_data=info_data, url=info_url,flask_url=flask_url,base_url=base_url)
+    #get indexed status
+    indexed_url = get_url(f"{indexed_path}")
+    indexed = requests.get(indexed_url)
+    if indexed.status_code == 200:
+        indexed_data = indexed.json()
+
+    indexed_height=indexed_data['indexedHeight']
+
+    header_id = []
+    no_txs = []
+    height=[]
+    timestamp=[]
+
+
+
+    for i in range(5):
+        result_header_id, result_no_txs = block2header(info_data['fullHeight']-i)
+        height.append(info_data['fullHeight']-i)
+        header_id.append(result_header_id)
+        no_txs.append(result_no_txs)
+        # get header timestamp from header info, need to loop this eventually
+        header_url = get_url(f"{block_path}{header_id[i]}/header")
+        header_response = requests.get(header_url)
+        if header_response.status_code == 200:
+            header_data = header_response.json()
+            timestamp.append(header_data['timestamp'])
+
+    return render_template('index.html', info_data=info_data, url=info_url,flask_url=flask_url,base_url=base_url, header_id=header_id,no_txs=no_txs,height=height,timestamp=timestamp,indexed_height=indexed_height)
 
 
 @app.route('/transaction_details/<transaction_id>')
@@ -91,7 +121,30 @@ def transaction_details(transaction_id):
     else:
         return "Failed to retrieve transaction details."
 
-@app.route('/process_box/<box_id>')
+
+def block2header(block_height):
+
+    block_url = get_url(f"{block_path}at/{block_height}")
+    header_id = requests.get(block_url)
+    if header_id.status_code == 200:
+        header_id = header_id.json()
+
+    header_id=header_id[0]
+    #get number of transactions
+    transaction_url = get_url(f"{block_path}{header_id}")
+    transaction_response = requests.get(transaction_url)
+
+    if transaction_response.status_code == 200:
+        transaction_data = transaction_response.json()
+
+    no_txs = len(transaction_data['blockTransactions']['transactions'])
+
+    return (header_id,no_txs)
+
+
+
+
+@app.route('/boxid/<box_id>')
 def box_details(box_id):
     try:
         box_data,url = process_box(box_id)
@@ -115,6 +168,41 @@ def box_details(box_id):
         error_message = "An error occurred: {}".format(e)
         return render_template('error_template.html', error_message=error_message)
 
+@app.route('/blocks/<header>')
+def blocks_details(header):
+
+    #get transactions in block/header
+    transaction_url = get_url(f"{block_path}{header}")
+    transaction_response = requests.get(transaction_url)
+
+    if transaction_response.status_code == 200:
+        transaction_data = transaction_response.json()
+
+    #get header timestamp from header info, need to loop this eventually
+    header_url = get_url(f"{block_path}{header}/header")
+    header_response = requests.get(header_url)
+
+    if header_response.status_code == 200:
+        header_data = header_response.json()
+
+    #get timestamp and convert to text
+    timestamp=header_data['timestamp']
+
+    no_txs = len(transaction_data['blockTransactions']['transactions'])
+    transaction_ids = [transaction['id'] for transaction in transaction_data['blockTransactions']['transactions']]
+
+    value = []
+    for transaction in transaction_data['blockTransactions']['transactions']:
+        total_value = sum(output['value'] for output in transaction['outputs'])
+        value.append(total_value)
+
+    if transaction_data:
+        return render_template('blocks.html', transaction_details= transaction_data['blockTransactions']['transactions'], flask_url=flask_url, transaction_ids=transaction_ids,header=header,no_txs=no_txs,value=value, timestamp=timestamp)
+    else:
+        return "Failed to retrieve transaction details."
+
+
+
 @app.route('/')
 def process_box(box_id):
 
@@ -124,6 +212,9 @@ def process_box(box_id):
     if transaction_response.status_code == 200:
         transaction_data = transaction_response.json()
         return (transaction_data, transaction_url)
+
+
+
 
 @app.route('/search', methods=['GET', 'POST'])
 def search_transaction():
