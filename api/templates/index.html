@@ -146,6 +146,9 @@
         <!-- Card below with Latest Blocks -->
         <div class="card-body-bottom">
             <h2><b>Latest Blocks</b></h2>
+            {% if indexed_height < height[0] %}
+                <p style="color: red; font-weight: bold;">Node is not fully indexed, transactions and block info may be missing.</p>
+            {% endif %}
             <table style="border-collapse: collapse; width: 520px; box-shadow: none; margin: 0 auto;">
                 <tbody>
                     {% for header_id in header_id %}
