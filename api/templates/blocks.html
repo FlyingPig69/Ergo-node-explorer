@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style_sheet.css') }}"/>
+    <title>Blockchain Box Information</title>
+</head>
+
+<body>
+
+    <div class="header">
+        <b><a target="_self" href="{{flask_url}}" style="color:white;">⌂Node Explorer</a></b>
+        <div class="search-card">
+            <form method="get" action="/search" onsubmit="return validateForm()" class="search-form">
+                <div class="flex-container">
+                    <input type="text" name="search_text" id="search_text" class="form-control custom-search-box" placeholder="Search text...">
+                    <select name="search_type" id="search_type" class="form-control custom-search-lov">
+                        <option value="box_id">Box ID</option>
+                        <option value="transaction_id">Transaction ID</option>
+                    </select>
+                    <button type="submit" class="btn btn-dark custom-search-btn">Search</button>
+                </div>
+                <br>
+            </form>
+        </div>
+    </div>
+
+    <div class="container">
+        <h1 class="text-center">Block Transactions {{block_height}}</h1>
+
+        <!-- Card to display transaction details -->
+        <div class="card mb-4">
+            <div class="card-header">
+
+             {% for transaction in transaction_details %}
+                <div>
+                    <strong>Transaction ID:</strong><a href="{{flask_url}}/transaction_details/{{ transaction.id }}">{{ transaction.id }}</a><br>
+                    <strong>Erg sent:</strong> {{ (value[loop.index0])/1000000000 }} ERG
+                </div>
+                <hr> <br>
+            {% endfor %}
+
+
+
+                <br><br>
+            </div>
+        </div>
+    </div>
+
+</body>
+
+</html>
