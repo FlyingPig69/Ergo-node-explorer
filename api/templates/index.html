@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -9,52 +10,84 @@
             margin: 0;
         }
 
-
-
         .container {
-            margin-top: 100px; 
-        }
-
-        .logo {
-            height: 100%; 
+            margin-top: 100px;
+            text-align:center;
         }
 
         .card-container {
-            margin-top: 100px;
+            width: 1100px;
+            margin-top: 20px;
+            padding: 10px;
             text-align: center;
-            justify-content: center;
-            max-width: 400px;
-            width: 400px;
-            margin: 0 auto; 
             display: grid;
-            grid-template-columns: repeat(2, 1fr);
+            grid-template-columns: repeat(3, 1fr);
             gap: 20px;
+            margin: 0 auto;
         }
 
-        .card {
-            justify-content: center;
-            max-width: 500px;
-            width: 500px;
-            margin: 0 auto; 
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 20px;
-            box-shadow: 1 4px 6px rgba(0, 0, 0, 0.5);
+        .card-bottom {
+            width: 800px;
+            margin: 0 auto; /* Center the card-bottom */
+            box-shadow: 1px 4px 6px rgba(0, 0, 0, 0.5);
+            background-color: white;
+            border-radius: 10px;
         }
 
-        .card-text {
-            font-size: 24px;
+        .card-text-height {
+            width:200px;
+            vertical-align:top;
+            font-size: 16px;
         }
 
+        .card-title,
+        .card-text a,
+        .card-text span {
+            margin-bottom: 10px;
+            margin-top: 10px;
+            vertical-align: top;
+        }
 
+        .card-text{
+           font-size: 16px;
+        }
+
+            .card-body-bottom {
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+                text-align:center;
+                box-shadow: 1px 4px 6px rgba(0, 0, 0, 0.5);
+                background-color: white;
+                border-radius: 10px;
+                padding: 20px; /* Add padding for spacing */
+                max-width: 1075px; /* Add max-width for responsiveness */
+            }
+
+.card-body-top {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 10px;
+    margin-top: 10px;
+    height: 110px;
+    box-shadow: 1px 4px 6px rgba(0, 0, 0, 0.5);
+    background-color: white;
+    border-radius: 10px;
+    align-items: center;
+}
+
+        @media (min-width: 768px) {
+            .card-bottom {
+                max-width: 800px;
+            }
+        }
     </style>
 </head>
+
 <body>
-       <div class="header">
-        <b><a target="_self" href="{{flask_url}}"  style="color:white;">
-        ⌂Node Explorer</a>
-        </b>
-            <div class="search-card">
+    <div class="header">
+        <b><a target="_self" href="{{flask_url}}" style="color:white;">⌂Node Explorer</a></b>
+        <div class="search-card">
             <form method="get" action="/search" onsubmit="return validateForm()" class="search-form">
                 <div class="flex-container">
                     <input type="text" name="search_text" id="search_text" class="form-control custom-search-box" placeholder="Search text...">
@@ -62,78 +95,102 @@
                         <option value="box_id">Box ID</option>
                         <option value="transaction_id">Transaction ID</option>
                     </select>
-
                     <button type="submit" class="btn btn-dark custom-search-btn">Search</button>
                 </div>
                 <br>
             </form>
         </div>
-
-    </div> 
+    </div>
 
     <div class="container">
+        <div class="white-text">
+            <br><br><br><br>
+            Early version, may crash or be taken down at any point, but so far it's been pretty reliable. <br><br>
+            I initially built this to be able to inspect boxes without having to decipher JSONs every time.<br>
+            Long-term plan is to add more features using the Node API with outputs formatted for easy reading. <br>
+            <br><br>
+            <i>- FlyingPig</i><br><br>
+            <a target="_blank" href="https://github.com/FlyingPig69/ergo-node-explorer" style="color:white;">
+                <img src="{{ url_for('static', filename='github-mark-white.png') }}" height="30" width="30"> Source
+            </a>
+            <br><br>
+        </div>
+
+        <div class="card-container" style="margin: 0 auto;">
+            <!-- Card 1: Node Name -->
+            <div class="card-body-top">
+                <h2 class="card-title"><b>Node Name</b></h2>
+                <div class="card-text">
+                    {{ info_data.name }}<br>
+                    {{ base_url }}<br>
+                    Indexed Height: {{indexed_height}}
 
 
-<div class="white-text">
-  <br><br><br><br>
-    Early alpha, may crash or be taken down at any point. Final version will be released in 2 weeks... <br><br>
-    I initially built this to be able to inspect boxes without having to decypher jsons every time.<br>
-    Long-term plan is to add more features using the Node API with outputs formatted for easy reading. <br>
-    <br><br>
-    <i>- FlyingPig</i><br><br>
-    <a target="_blank" href="https://github.com/FlyingPig69/ergo-node-explorer" style="color:white;"><img src="{{ url_for('static', filename='github-mark-white.png') }}" height="30" width="30"> Source</a>
 
-
-  <br><br>
-</div>
-
-        <div class="card-container">
-            <div class="card">
-                <div class="card-body">
-                    <h2 class="card-title"><b>Node Name</b></h2>
-                    <p class="card-text">{{ info_data.name }}</p>
-                    <p class="card-text">{{ base_url }}</p>
-                </div>
-            </div>
-            <!-- Card for Unconfirmed Count -->
-            <div class="card">
-                <div class="card-body">
-                    <h2 class="card-title"><b>TXs in Mempool</b></h2>
-                    <p class="card-text">{{ info_data.unconfirmedCount }}</p>
-                </div>
+                    </div>
             </div>
 
-            <!-- Card for Full Height -->
-            <div class="card">
-                <div class="card-body">
-                    <h2 class="card-title"><b>Full Height</b></h2>
-                    <p class="card-text">{{ info_data.fullHeight }}</p>
-                </div>
+            <!-- Card 2: TXs in Mempool -->
+            <div class="card-body-top">
+                <h2 class="card-title"><b>TXs in Mempool</b></h2>
+                {{ info_data.unconfirmedCount }}
             </div>
 
-            <div class="card">
-                <div class="card-body">
-                    <h2 class="card-title"><b>Difficulty</b></h2>
-                    <p class="card-text">{{ info_data.difficulty }}</p>
-                </div>
+            <!-- Card 3: Difficulty -->
+            <div class="card-body-top">
+                <h2 class="card-title"><b>Difficulty</b></h2>
+                {{ info_data.difficulty }}
             </div>
         </div>
-    </div> 
+
+        <!-- Card below with Latest Blocks -->
+        <div class="card-body-bottom">
+            <h2><b>Latest Blocks</b></h2>
+            <table style="border-collapse: collapse; width: 475px; box-shadow: none; margin: 0 auto;">
+                <tbody>
+                    {% for header_id in header_id %}
+                    <tr>
+                        <td style="width: 75px; border: none; font-size: 20px; text-align: left;"><a href="{{flask_url}}/blocks/{{header_id}}">{{ height[loop.index0] }}</a></td>
+                        <td style="width: 200px; border: none; font-size: 20px; text-align: left;">{{no_txs[loop.index0]}} Transactions</td>
+                        <td style="width: 200px; border: none; font-size: 20px; text-align: left;"><span id="timestamp_{{loop.index0}}">{{timestamp[loop.index0]}}</span></td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
 
     <script>
         function validateForm() {
             var searchText = document.getElementById('search_text').value;
 
-            // Check if the search text is empty
             if (searchText.trim() === '') {
                 alert('Please enter a search term.');
-                return false; // Prevent form submission
+                return false;
             }
 
-            // If the search text is not empty, allow the form submission
             return true;
         }
 
+        document.addEventListener('DOMContentLoaded', function () {
+            // Get all timestamp elements
+            var timestamps = document.querySelectorAll('[id^="timestamp_"]');
+
+            timestamps.forEach(function (timestampElement) {
+                var timestamp = parseInt(timestampElement.innerText);
+
+                // Convert timestamp to local time
+                var localTime = new Date(timestamp);
+
+                // Format time and date separately
+                var timeString = localTime.toLocaleTimeString();
+                var dateString = localTime.toLocaleDateString();
+
+                // Update the content of the element with time and date
+                timestampElement.innerText = timeString + '\u00A0\u00A0\u00A0' + dateString;
+            });
+        });
     </script>
 </body>
+
 </html>
