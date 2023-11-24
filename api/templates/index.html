@@ -11,7 +11,7 @@
         }
 
         .container {
-            margin-top: 100px;
+            margin-top: 150px;
             text-align:center;
         }
 
@@ -103,19 +103,6 @@
     </div>
 
     <div class="container">
-        <div class="white-text">
-            <br><br><br><br>
-            Early version, may crash or be taken down at any point, but so far it's been pretty reliable. <br><br>
-            I initially built this to be able to inspect boxes without having to decipher JSONs every time.<br>
-            Long-term plan is to add more features using the Node API with outputs formatted for easy reading. <br>
-            <br><br>
-            <i>- FlyingPig</i><br><br>
-            <a target="_blank" href="https://github.com/FlyingPig69/ergo-node-explorer" style="color:white;">
-                <img src="{{ url_for('static', filename='github-mark-white.png') }}" height="30" width="30"> Source
-            </a>
-            <br><br>
-        </div>
-
         <div class="card-container" style="margin: 0 auto;">
             <!-- Card 1: Node Name -->
             <div class="card-body-top">
@@ -124,9 +111,6 @@
                     {{ info_data.name }}<br>
                     {{ base_url }}<br>
                     Indexed Height: {{indexed_height}}
-
-
-
                     </div>
             </div>
 
@@ -160,6 +144,19 @@
                     {% endfor %}
                 </tbody>
             </table>
+        </div>
+
+        <div class="white-text" style="text-align: left; margin-left: 225px;">
+            <br>
+            Early version, may crash or be taken down at any point, but so far it's been pretty reliable. <br><br>
+            I initially built this to be able to inspect boxes without having to decipher JSONs every time.<br>
+            Long-term plan is to add more features using the Node API with outputs formatted for easy reading. <br>
+            <br><br>
+            <i>- FlyingPig</i><br><br>
+            <a target="_blank" href="https://github.com/FlyingPig69/ergo-node-explorer" style="color:white;">
+                <img src="{{ url_for('static', filename='github-mark-white.png') }}" height="30" width="30"> Source
+            </a>
+            <br><br>
         </div>
     </div>
 
