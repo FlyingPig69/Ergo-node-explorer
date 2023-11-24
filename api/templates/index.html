@@ -2,88 +2,205 @@
 <html lang="en">
 
 <head>
+
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=0.01, maximum-scale=2" />
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style_sheet.css') }}" />
-    <title>Blockchain Box Information</title>
-</head>
-
-<style>
-
-.table{
-    border:none;
-    }
-
-.card {
-
-    width: 1200px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-    white-space: wrap;
-    word-wrap: break-word;
-    padding: 20px;
-    margin: 20px;
-    border-radius: 8px;
-    background-color: #ffffff;
-    text-align: left;
-    justify-content: left;
-}
-
-
-
-
-
+    <style>
 
     body {
-    background-color: #005b7a;
-    display: flex;
-    justify-content: center;
-    min-height: 100vh;
-    margin: 0;
-}
-
-   .header a {
-        color: white;
+    background: -moz-linear-gradient(45deg, #026a8d 0%, #005b7a 29%, #00263a 66%, #000f1a 100%);
+    background: -webkit-linear-gradient(45deg, #026a8d 0%, #005b7a 29%, #00263a 66%, #000f1a 100%);
+    background: linear-gradient(45deg, #026a8d 0%, #005b7a 29%, #00263a 66%, #000f1a 100%);
+        background-size: 400% 400%;
+        -webkit-animation: Gradient 15s ease infinite;
+      -moz-animation: Gradient 15s ease infinite;
+      animation: Gradient 15s ease infinite;
+      /*min-height: calc(100vh - 2rem);*/
+      display: flex;
+      flex-direction: column;
+      align-items: stretch;
+      justify-content: space-evenly;
+      overflow: hidden;
+      position: relative;
     }
 
-    .custom-search-box,
-    .custom-search-lov,
-    .custom-search-btn,
-    .card-title,
-    .btn,
-    .hidden-row,
-    .clipboard-icon,
-    .close-button,
-    .expand-asset-button,
-    .collapse-asset-button,
-    .expand-button {
-     }
-
-    a {
-        color: #0066cc;
-        text-decoration: none;
+    body::before,
+    body::after {
+      content: "";
+      width: 80vmax;
+      height: 70vmax;
+      position: absolute;
+      background: rgba(255, 255, 255, 0.07);
+      left: -20vmin;
+      top: -20vmin;
+      animation: morph 15s linear infinite alternate, spin 20s linear infinite;
+      z-index: 1;
+      will-change: border-radius, transform;
+      transform-origin: 55% 55%;
+      pointer-events: none;
     }
 
-
-    .expand-asset-button,
-    .collapse-asset-button,
-    .expand-button {
-        color: white;
-        background-color: #005b7a ;
+    body::after {
+        width: 70vmin;
+        height: 70vmin;
+        left: auto;
+        right: -10vmin;
+        top: auto;
+        bottom: 0;
+        animation: morph 10s linear infinite alternate, spin 26s linear infinite reverse;
+        transform-origin: 20% 20%;
     }
 
-}
+    @-webkit-keyframes Gradient {
+      0% {
+        background-position: 0 50%
+      }
+      50% {
+        background-position: 100% 50%
+      }
+      100% {
+        background-position: 0 50%
+      }
+    }
 
-.search-card{
-    color: #005b7a;
+    @-moz-keyframes Gradient {
+      0% {
+        background-position: 0 50%
+      }
+      50% {
+        background-position: 100% 50%
+      }
+      100% {
+        background-position: 0 50%
+      }
+    }
+
+    @keyframes Gradient {
+      0% {
+        background-position: 0 50%
+      }
+      50% {
+        background-position: 100% 50%
+      }
+      100% {
+        background-position: 0 50%
+      }
+    }
+
+    @keyframes morph {
+      0% {
+        border-radius: 40% 60% 60% 40% / 70% 30% 70% 30%; }
+      100% {
+        border-radius: 40% 60%; }
+    }
+
+    @keyframes spin {
+      to {
+        transform: rotate(1turn);
+      }
+    }
+      .st0{display:none;}
+      .st1{display:inline;}
+      .st2{opacity:0.29;}
+      .st3{fill:#FFFFFF;}
+      .st4{clip-path:url(#SVGID_2_);fill:#FFFFFF;}
+      .st5{clip-path:url(#SVGID_4_);}
+      .st6{clip-path:url(#SVGID_6_);}
+      .st7{clip-path:url(#SVGID_8_);}
+      .st8{clip-path:url(#SVGID_10_);}
+      .st9{fill:none;}
+      .st10{clip-path:url(#SVGID_12_);}
+      .st11{opacity:0.7;}
+      .st12{clip-path:url(#SVGID_14_);}
+      .st13{opacity:0.2;}
+      .st14{clip-path:url(#SVGID_16_);}
+      .st15{opacity:0.3;fill:#FFFFFF;enable-background:new    ;}
+
+        .container {
+            margin-top: 150px;
+            text-align:center;
+        }
+
+        .card-container {
+            width: 1100px;
+            margin-top: 20px;
+            padding: 10px;
+            text-align: center;
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+            margin: 0 auto;
         }
 
 
-</style>
+        .card-text-height {
+            width:200px;
+            vertical-align:top;
+            font-size: 12px;
+        }
+
+        .card-title,
+        .card-text a,
+        .card-text span {
+            margin-bottom: 10px;
+            margin-top: 10px;
+            vertical-align: top;
+        }
+
+
+    .card-body-top {
+        display: flex;
+        flex-direction: column;
+        max-width: 100%;
+        margin-bottom: 10px;
+        margin-top: 10px;
+        height: 110px;
+        box-shadow: 1px 4px 6px rgba(0, 0, 0, 0.5);
+        background-color: #ffffff;
+        border-radius: 10px;
+        align-items: center;
+    }
+
+        @media (min-width: 768px) {
+            .card-bottom {
+                max-width: 800px;
+            }
+        }
+
+        body {
+            margin: 0;
+            font-family: 'Arial', sans-serif; /* Change to your desired font */
+        }
+
+        .container {
+            margin-top: 150px;
+            text-align: center;
+            justify-content: center;
+        }
+
+        /* Add styles for your cards and other elements here */
+
+        /* Example style for card titles */
+        .card-title {
+            font-size: 24px;
+            color: #004080; /* Change to your desired title color */
+        }
+
+        /* Example style for links */
+        a {
+            color: #0066cc; /* Change to your desired link color */
+            text-decoration: none;
+        }
+
+
+    </style>
+</head>
 
 <body>
     <div class="header">
- <b><a target="_self" href="{{flask_url}}" style="color:white;"> <img src="{{ url_for('static', filename='ergo_white.png') }}" height="50" width="50" style="vertical-align: middle; margin-bottom:10px; margin-top:10px;">&nbsp;Node Explorer</a></b>
-        </b>
+        <b><a target="_self" href="{{flask_url}}" style="color:white;"> <img src="{{ url_for('static', filename='ergo_white.png') }}" height="50" width="50" style="vertical-align: middle; margin-bottom:10px; margin-top:10px;">&nbsp;Node Explorer</a></b>
+
         <div class="search-card">
             <form method="get" action="/search" onsubmit="return validateForm()" class="search-form">
                 <div class="flex-container">
@@ -92,7 +209,6 @@
                         <option value="box_id">Box ID</option>
                         <option value="transaction_id">Transaction ID</option>
                     </select>
-                    <!-- Add the search button here -->
                     <button type="submit" class="btn btn-dark custom-search-btn">Search</button>
                 </div>
                 <br>
@@ -100,223 +216,105 @@
         </div>
     </div>
 
-    <div class="container" style="margin-left:50px;" >
-        <h1 class="text-center">Transaction Data</h1>
-        {% for transaction_id, transaction_data in transaction_details.items() %}
-        <div class="card mb-4"  >
-            <div class="card-header">
+    <div class="container" >
+        <div class="card-container" style="margin: 0 auto;">
+            <!-- Card 1: Node Name -->
+            <div class="card-body-top">
+                <h2 class="card-title"><b>Node Info</b></h2>
+                <div class="card-text">
+                    {{ info_data.name }}<br>
+                    {{ base_url }}<br>
+                    Indexed Height: {{indexed_height}}
+                    </div>
+            </div>
 
-                <b>Transaction ID:</b>
-                <span id="txid"><a href="{{ transaction_id }}">{{ transaction_id }}</span></a>
-                <button onclick="copyToClipboard('txid')" class="clipboard-icon">📋</button><br><br>
+            <!-- Card 2: TXs in Mempool -->
+            <div class="card-body-top">
+                <h2 class="card-title"><b>TXs in Mempool</b></h2>
+                {{ info_data.unconfirmedCount }}
+            </div>
 
-                <b>Inclusion Height:</b> {{ transaction_data['inclusionHeight']}}<br>
-                <b>Creation Height:</b> {{ transaction_data['creationHeight']}}<br><br>
-                Transaction took <b>{{ transaction_data['inclusionHeight'] - transaction_data['creationHeight'] }} blocks</b> to get confirmed
-                <br><br>
+            <!-- Card 3: Difficulty -->
+            <div class="card-body-top">
+                <h2 class="card-title"><b>Difficulty</b></h2>
+                {{ info_data.difficulty }}
             </div>
         </div>
+        <!-- Card below with Latest Blocks -->
+        <div class="card-body-bottom">
 
-         <div style="display: flex; justify-content: space-between; margin-left: 20px; margin-bottom: 20px; background-color: #ffffff; border-radius: 10px; width: 97%;">
-            <div style="width: 50%;">
-                <div class="column">
-                    <div class="table-card" style="margin-left:10px; text-align:center;" >
-                        <br>
-                        <b>Inputs</b>
-                        <br>
-                        <br>
-                        <table class="table" style="border:none;">
+            {% if indexed_height < height[0] %}
+                <p style="color: red; font-weight: bold;">Node is not fully indexed, transactions and block info may be missing.</p>
+            {% endif %}
+         <table style="border-collapse: collapse; width: 1075px; margin-left:50px; box-shadow: 1px 4px 6px rgba(0, 0, 0, 0.5); margin: 0 auto; background-color:#ffffff; border-radius:10px; height:300px;">
+            <thead>
+                <tr>
+                    <td colspan="5" style="border: none;">
+                        <div class="card-title" style="text-align: center;"><b>Latest Blocks</b></div>
+                    </td>
+                </tr>
+            </thead>
+            <tbody>
+                {% for header_id in header_id %}
+                <tr>
 
-                            <tbody>
-                                {% for input_asset in transaction_data['Input Details'] %}
-                                <tr class="{% if loop.index > 5 %}hidden-row{% endif %}">
+                    <td style="width: 300px;  border: none; font-size: 20px; text-align: left;"></td>
+                    <td style="width: 75px;  border: none; font-size: 20px; text-align: left;"><a href="{{flask_url}}/blocks/{{header_id}}">{{ height[loop.index0] }}</a></td>
+                    <td style="width: 150px; border: none; font-size: 20px; text-align: left;">{{no_txs[loop.index0]}} Transactions</td>
+                    <td style="width: 250px; border: none; font-size: 20px; text-align: left;"><span id="timestamp_{{loop.index0}}">{{timestamp[loop.index0]}}</span></td>
 
+                    <td style="width: 300px;  border: none; font-size: 20px; text-align: left;"></td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        </div>
 
-                            <td class="address">
-                              <span id="addressid">
-                                <a href="https://explorer.ergoplatform.com/en/addresses/{{ input_asset['address'] }}">{{ input_asset['address']}}</a>
-                              </span>
-                              <button onclick="copyToClipboard('addressid')" class="clipboard-icon">📋</button><br>
-
-                              <div style="font-size:12px;">BoxId: <a href="{{flask_url}}/boxid/{{ input_asset['box_id']}}">
-                                <span id="box_id" style="font-size: smaller;">{{ input_asset['box_id']}}</span>
-                              </a>
-
-                              <button onclick="copyToClipboard('box_id')" class="clipboard-icon">📋</button><br>
-                                   </div>
-                            </td>
-
-
-                                    <td style="width:20%; font-size:12px;">{{ input_asset['value'] }} ERG</td>
-                                    <td class="assets" style="width:25%;">
-                                        <button class="btn btn-primary btn-smaller expand-asset-button" onclick="toggleAssetBox(this)" {% if not input_asset['assets'] %}style="display: none;"{% endif %}>Show Assets</button>
-                                        <button class="btn btn-primary btn-smaller collapse-asset-button" style="display: none;" onclick="toggleAssetBox(this)">Hide Assets</button>
-                                        <div class="asset-box" style="font-size:12px;">
-                                            {% if input_asset['assets'] %}
-                                                {% for asset in input_asset['assets'] %}
-                                                    {{ asset['token_name'] }}
-                                                    {% if asset['amount'] is defined %}
-                                                        {{ asset['amount'] }}
-                                                        {% if asset.get('decimals', 0) > 0 %}
-                                                            ({{ asset['amount'] / (10 ** asset['decimals']) }} {{ asset['token_name'] }})
-                                                        {% endif %}
-                                                    {% endif %}
-                                                    {% if asset['decimals'] is defined %}
-                                                        <br>Decimals: {{ asset['decimals'] }}
-                                                    {% endif %}
-                                                    {% if not loop.last %}<hr>{% endif %}
-                                                {% endfor %}
-                                            {% else %}
-                                                No tokens
-                                            {% endif %}
-                                        </div>
-                                    </td>
-                                </tr>
-                                {% endfor %}
-                                {% if transaction_data['Input Details']|length > 5 %}
-                                <tr>
-                                    <td>
-                                        <button class="btn btn-primary expand-button" onclick="toggleRows(this)">Expand</button>
-                                    </td>
-                                </tr>
-                                {% endif %}
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
-            <div class="column" style="display: flex; align-items: center;">
-                <!-- Arrow Column -->
-                <span class="large-arrow">➜</span>
-            </div>
-
-                    <div style="width: 50%;">
-                    <div class="table-card" style="margin-right:10px; margin-left:10px;" >
-                            <br>
-                            <b>Outputs</b><br><br>
-                            <table class="table">
-
-                                <tbody>
-                                    {% for output_asset in transaction_data['Output Details'] %}
-                                    <tr class="{% if loop.index > 5 %}hidden-row{% endif %}">
-
-
-
-                                        <td class="address">
-                                        <span id="addressid"><a href="https://explorer.ergoplatform.com/en/addresses/{{ output_asset['address'] }}">{{ output_asset['address']}}</span></a>
-                                        <button onclick="copyToClipboard('addressid')" class="clipboard-icon">📋</button><br>
-                                        <div style="font-size:12px;">BoxId: <a href="{{flask_url}}/boxid/{{ output_asset['box_id']}}">
-                                        <span id="box_id" style="font-size: smaller;">{{ output_asset['box_id']}}</span>
-                                        </div>
-                                        </a>
-
-                                        </td>
-
-
-                                        <td style="width:20%; font-size:12px;">{{ output_asset['value'] }} ERG</td>
-                                        <td class="assets" style="width:25%;">
-                                            <button class="btn btn-primary btn-smaller expand-asset-button" onclick="toggleAssetBox(this)" {% if not output_asset['assets'] %}style="display: none;"{% endif %}>Show Assets</button>
-                                            <button class="btn btn-primary btn-smaller collapse-asset-button" style="display: none;" onclick="toggleAssetBox(this)">Hide Assets</button>
-                                            <div class="asset-box" style="font-size:12px;">
-                                                {% if output_asset['assets'] %}
-                                                    {% for asset in output_asset['assets'] %}
-                                                        {{ asset['token_name'] }}
-                                                        {% if asset['amount'] is defined %}
-                                                            {{ asset['amount'] }}
-                                                            {% if asset.get('decimals', 0) > 0 %}
-                                                                ({{ asset['amount'] / (10 ** asset['decimals']) }} {{ asset['token_name'] }})
-                                                            {% endif %}
-                                                        {% endif %}
-                                                        {% if asset['decimals'] is defined %}
-                                                            <br>Decimals: {{ asset['decimals'] }}
-                                                        {% endif %}
-                                                        {% if not loop.last %}<hr>{% endif %}
-                                                    {% endfor %}
-                                                {% else %}
-                                                    No tokens
-                                                {% endif %}
-                                            </div>
-                                        </td>
-                                    </tr>
-                                    {% endfor %}
-                                    {% if transaction_data['Output Details']|length > 5 %}
-                                    <tr>
-                                        <td>
-                                            <button class="btn btn-primary expand-button" onclick="toggleRows(this)">Expand</button>
-                                        </td>
-                                    </tr>
-                                    {% endif %}
-                                </tbody>
-                            </table>
-                        <br><br>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        {% endfor %}
-
-    </div>
-
-    <div class="asset-popup" id="asset-popup">
-        <div class="asset-popup-content">
-            <button class="close-button" onclick="closeAssetPopup()">&times;</button>
-            <div class="asset-content">
-                <!-- Asset content goes here -->
-            </div>
+        <div class="white-text" style="text-align: center; ">
+            <br>
+            Early version, may crash or be taken down at any point, but so far it's been pretty reliable. <br><br>
+            I initially built this to be able to inspect boxes without having to decipher JSONs every time.<br>
+            Long-term plan is to add more features using the Node API with outputs formatted for easy reading. <br>
+            <br><br>
+            <i>- FlyingPig</i><br><br>
+            <a target="_blank" href="https://github.com/FlyingPig69/ergo-node-explorer" style="color:white;">
+                <img src="{{ url_for('static', filename='github-mark-white.png') }}" height="30" width="30"> Source
+            </a>
+            <br><br>
         </div>
     </div>
-
-
 
     <script>
-        function toggleRows(button) {
-            var table = button.closest('table');
-            var rows = table.querySelectorAll('.hidden-row');
-            var isVisible = rows[0].style.display === 'none' || !rows[0].style.display;
+        function validateForm() {
+            var searchText = document.getElementById('search_text').value;
 
-            for (var i = 0; i < rows.length; i++) {
-                rows[i].style.display = isVisible ? 'table-row' : 'none';
+            if (searchText.trim() === '') {
+                alert('Please enter a search term.');
+                return false;
             }
 
-            button.textContent = isVisible ? 'Collapse' : 'Expand';
+            return true;
         }
 
-function toggleAssetBox(button) {
-    var assetsCell = button.closest('td');
-    var assetBox = assetsCell.querySelector('.asset-box');
-    var isVisible = assetBox.style.display === 'none' || assetBox.style.display === '';
+        document.addEventListener('DOMContentLoaded', function () {
+            // Get all timestamp elements
+            var timestamps = document.querySelectorAll('[id^="timestamp_"]');
 
-    if (isVisible) {
-        // Show the asset box
-        assetBox.style.display = 'block';
-    } else {
-        // Hide the asset box
-        assetBox.style.display = 'none';
-    }
+            timestamps.forEach(function (timestampElement) {
+                var timestamp = parseInt(timestampElement.innerText);
 
-    var expandButton = assetsCell.querySelector('.expand-asset-button');
-    var collapseButton = assetsCell.querySelector('.collapse-asset-button');
+                // Convert timestamp to local time
+                var localTime = new Date(timestamp);
 
-    expandButton.style.display = isVisible ? 'none' : 'inline';
-    collapseButton.style.display = isVisible ? 'inline' : 'none';
+                // Format time and date separately
+                var timeString = localTime.toLocaleTimeString();
+                var dateString = localTime.toLocaleDateString();
 
-    // Optional: Trigger a reflow to force the browser to repaint and apply styles immediately
-    // This can help with some browsers not immediately rendering the changes
-    void assetBox.offsetWidth;
-}
-
-    function copyToClipboard(elementId) {
-        var textToCopy = document.getElementById(elementId).innerText;
-        var dummy = document.createElement("textarea");
-        document.body.appendChild(dummy);
-        dummy.value = textToCopy;
-        dummy.select();
-        document.execCommand("copy");
-        document.body.removeChild(dummy);
-    }
-
+                // Update the content of the element with time and date
+                timestampElement.innerText = timeString + '\u00A0\u00A0\u00A0' + dateString;
+            });
+        });
     </script>
-
 </body>
 
 </html>
