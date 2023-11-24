@@ -3,15 +3,41 @@
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=0.01, maximum-scale=2" />
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style_sheet.css') }}"/>
     <title>Blockchain Box Information</title>
 </head>
+<style>
+
+    body {
+    background-color: #005b7a;
+    display: flex;
+    justify-content: center;
+    min-height: 100vh;
+    margin: 0;
+}
+
+    .card {
+        max-width: 1150px;
+        width:1150px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        white-space: wrap;
+        word-wrap: break-word;
+        padding: 20px;
+        margin: 20px;
+        border-radius: 8px;
+        background-color: #ffffff;
+        text-align: left;
+        justify-content: left;
+    }
+
+</style>
+
 
 <body>
 
     <div class="header">
-        <b><a target="_self" href="{{flask_url}}" style="color:white;">⌂Node Explorer</a></b>
+ <b><a target="_self" href="{{flask_url}}" style="color:white;"> <img src="{{ url_for('static', filename='ergo_white.png') }}" height="50" width="50" style="vertical-align: middle; margin-bottom:10px; margin-top:10px;">&nbsp;Node Explorer</a></b>
         <div class="search-card">
             <form method="get" action="/search" onsubmit="return validateForm()" class="search-form">
                 <div class="flex-container">
