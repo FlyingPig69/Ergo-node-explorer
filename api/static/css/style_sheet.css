@@ -1,9 +1,6 @@
-body {
-    background-color: #073673;
-    display: flex;
-    justify-content: center;
-    min-height: 100vh;
-    margin: 0;
+    body {
+    font-family: 'Arial', sans-serif; /* Change to your desired font */
+    color: #444444; /* Change to your desired text color */
 }
 
 h1 {
@@ -14,24 +11,10 @@ h1 {
 
 .large-arrow {
     font-size: 4em; /* Adjust the size as needed */
-    text-align: center;
-    display: block;
-    margin: 0 auto;
+
 }
 
-.card {
-    max-width: 1150px;
-    width:1150px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-    white-space: wrap;
-    word-wrap: break-word;
-    padding: 20px;
-    margin: 20px;
-    border-radius: 8px;
-    background-color: #ffffff;
-    text-align: left;
-    justify-content: left;
-}
+
 
 .title {
     font-size: 24px;
@@ -43,7 +26,9 @@ table {
     width: 100%;
     font-size: 16px;
     border-collapse: collapse;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+    border:none;
+    vertical-align: top;
+
 }
 
 th {
@@ -51,13 +36,15 @@ th {
     font-size: 16px;
     font-weight: bold;
     color: #fff;
+
+
 }
 
 th,
 td {
-    border: 1px solid #ddd;
     padding: 8px;
     text-align: left;
+    vertical-align: top;
 }
 
 .hidden-row {
@@ -69,7 +56,7 @@ td {
     cursor: pointer;
     color: #ffffff;
     width:100px;
-    background-color: #073673;
+    background-color: #005b7a ;
     padding: 16px 16px;
     border: none;
     border-radius: 5px;
@@ -148,6 +135,8 @@ a {
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
+
+
 }
 
 .search-card {
@@ -204,8 +193,8 @@ button.clipboard-icon {
     border-radius: 1px;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
     padding: 2px;
-    max-width: 200px;
-    width:200px;
+    max-width: 100px;
+    width:100px;
     max-height: 0;     /* Initially hide the asset box */
     transition: max-height 0.3s ease;  /* Add a smooth transition effect */
     max-height: 150px; /* Set a fixed maximum height for the asset box */
@@ -217,8 +206,13 @@ button.clipboard-icon {
 .asset {
     width:10px;
     max-width:10px;
+    background-color: #005b7a ;
+}
 }
 
+.box_id_font {
+  font-size:8px;
+}
 
 .btn-smaller {
     cursor: pointer;
@@ -246,6 +240,7 @@ button.clipboard-icon {
     background-color: black;
     text-align: center;
     height: 100px;
+    color: #004080; /* Change to your desired title color */
     width: 100%;
     position: fixed; /* Fixed position to keep the border at the top */
     top: 0; /* Stick to the top of the viewport */
