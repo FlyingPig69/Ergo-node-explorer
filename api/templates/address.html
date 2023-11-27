@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=0.01, maximum-scale=2" />
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style_sheet.css') }}" />
+    <title>Blockchain Box Information</title>
+    <style>
+        body {
+            background-color: #005b7a;
+            display: flex;
+            justify-content: center;
+            min-height: 100vh;
+            margin: 0;
+        }
+
+        .card {
+            max-width: 1150px;
+            width: 1150px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            white-space: wrap;
+            word-wrap: break-word;
+            padding: 20px;
+            margin: 20px;
+            border-radius: 8px;
+            background-color: #ffffff;
+            text-align: left;
+            justify-content: left;
+        }
+
+    .hidden-row {
+        display: none;
+        }
+
+    .expand-button {
+    cursor: pointer;
+    color: #ffffff;
+    width:100px;
+    background-color: #005b7a;
+    padding: 5px 10px;
+    border: none;
+    border-radius: 4px;
+    font-size: 12px;
+}
+    </style>
+</head>
+
+<body>
+    <div class="header">
+        <b><a target="_self" href="{{flask_url}}" style="color:white;"> <img
+                    src="{{ url_for('static', filename='ergo_white.png') }}" height="50" width="50"
+                    style="vertical-align: middle; margin-bottom:10px; margin-top:10px;">&nbsp;Node
+                Explorer</a></b>
+        <div class="search-card">
+            <form method="get" action="/search" onsubmit="return validateForm()" class="search-form">
+                <div class="flex-container">
+                    <input type="text" name="search_text" id="search_text"
+                        class="form-control custom-search-box" placeholder="Search text...">
+                    <select name="search_type" id="search_type" class="form-control custom-search-lov">
+                        <option value="transaction_id">Transaction ID</option>
+                        <option value="address">Address</option>
+                        <option value="box_id">Box ID</option>
+                    </select>
+                    <button type="submit" class="btn btn-dark custom-search-btn">Search</button>
+                </div>
+                <br>
+            </form>
+        </div>
+    </div>
+
+    <div class="container">
+    <h2 style="text-align:center; color:white;">{{ address[:60] + '...' if address|length > 60 else address }}</h2>
+        <div class="card" style="margin-top:0px; width:1000px;">
+        <H2>Erg Balance: {{address_data['confirmed']['nanoErgs']/1000000000}} ({{address_data['unconfirmed']['nanoErgs']/1000000000}} Unconfirmed)
+        </div></H2>
+        <div class="card" style="margin-top:10px; width:1000px; table-layout:auto;border-collapse: collapse;" >
+        <h1 style="color: #444444;">Token Balance</h1>
+        <table style="max-width: 1000px; width: 100%; border-collapse: collapse; margin: 0 auto;">
+            <thead>
+                <tr>
+                    <th style="width: 30%; color: #ffffff;background-color:#005b7a;">Token Name</th>
+                    <th style="width: 20%; color: #ffffff;background-color:#005b7a;">Amount</th>
+                    <th style="width: 50%; color: #ffffff;background-color:#005b7a;">Token ID</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for token in address_data['confirmed']['tokens'] %}
+                    <tr class="{{ 'hidden-row' if loop.index > 4 else '' }}">
+                        <td style="width: 30%;"><b>{{ token['name'] }}</b></td>
+                        <td style="width: 20%;">
+                            {% if token['decimals'] > 0 %}
+                                {{ token['amount'] / token['decimals'] }}
+                            {% else %}
+                                {{ token['amount']}}
+                            {% endif %}
+                        </td>
+                        <td style="width: 50%;">{{ token['tokenId'] }}</td>
+                    </tr>
+                {% endfor %}
+                    <td><button class="expand-button" onclick="toggleRows()">Expand</button></td>
+            </tbody>
+        </table>
+        </div>
+
+
+        <div class="card" style="margin-top:0px; width:1000px;">
+        <H2> Latest transactions</H2>
+
+        NOT YET IMPLEMENTED<br>
+            <a href="https://explorer.ergoplatform.com/en/addresses/{{ address }}">Click here for main explorer</a>
+        </div>
+
+
+
+</div>
+
+
+
+
+
+</body>
+
+    <script>
+    var isExpanded = false;
+
+    function toggleRows() {
+        var rows = document.querySelectorAll('.hidden-row');
+        var button = document.querySelector('.expand-button');
+
+        for (var i = 0; i < rows.length; i++) {
+            rows[i].style.display = isExpanded ? 'none' : 'table-row';
+        }
+
+        // Change button text based on current state
+        button.innerText = isExpanded ? 'Expand' : 'Collapse';
+
+        // Toggle state
+        isExpanded = !isExpanded;
+    }
+
+function toggleAssetBox(button) {
+    var assetsCell = button.closest('td');
+    var assetBox = assetsCell.querySelector('.asset-box');
+    var isVisible = assetBox.style.display === 'none' || assetBox.style.display === '';
+
+    if (isVisible) {
+        // Show the asset box
+        assetBox.style.display = 'block';
+    } else {
+        // Hide the asset box
+        assetBox.style.display = 'none';
+    }
+
+    var expandButton = assetsCell.querySelector('.expand-asset-button');
+    var collapseButton = assetsCell.querySelector('.collapse-asset-button');
+
+    expandButton.style.display = isVisible ? 'none' : 'inline';
+    collapseButton.style.display = isVisible ? 'inline' : 'none';
+
+    // Optional: Trigger a reflow to force the browser to repaint and apply styles immediately
+    // This can help with some browsers not immediately rendering the changes
+    void assetBox.offsetWidth;
+}
+
+    function copyToClipboard(elementId) {
+        var textToCopy = document.getElementById(elementId).innerText;
+        var dummy = document.createElement("textarea");
+        document.body.appendChild(dummy);
+        dummy.value = textToCopy;
+        dummy.select();
+        document.execCommand("copy");
+        document.body.removeChild(dummy);
+    }
+
+    </script>
+
+</html>
