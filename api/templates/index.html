@@ -4,7 +4,7 @@
 <head>
 
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=0.01, maximum-scale=2" />
+    <meta name="viewport" content="width=device-width, initial-scale=0.01, maximum-scale=1.5" />
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style_sheet.css') }}" />
     <style>
 
@@ -29,7 +29,7 @@
     body::after {
       content: "";
       width: 80vmax;
-      height: 70vmax;
+      height: 90vmax;
       position: absolute;
       background: rgba(255, 255, 255, 0.07);
       left: -20vmin;
@@ -206,8 +206,9 @@
                 <div class="flex-container">
                     <input type="text" name="search_text" id="search_text" class="form-control custom-search-box" placeholder="Search text...">
                     <select name="search_type" id="search_type" class="form-control custom-search-lov">
-                        <option value="box_id">Box ID</option>
                         <option value="transaction_id">Transaction ID</option>
+                        <option value="address">Address</option>
+                        <option value="box_id">Box ID</option>
                     </select>
                     <button type="submit" class="btn btn-dark custom-search-btn">Search</button>
                 </div>
@@ -217,7 +218,7 @@
     </div>
 
     <div class="container" >
-        <div class="card-container" style="margin: 0 auto;">
+        <div class="card-container style="margin: 0 auto;">
             <!-- Card 1: Node Name -->
             <div class="card-body-top">
                 <h2 class="card-title"><b>Node Info</b></h2>
@@ -270,16 +271,17 @@
         </table>
         </div>
 
-        <div class="white-text" style="text-align: center; ">
+        <div class="white-text" style="text-align: center">
             <br>
-            Early version, may crash or be taken down at any point, but so far it's been pretty reliable. <br><br>
-            I initially built this to be able to inspect boxes without having to decipher JSONs every time.<br>
-            Long-term plan is to add more features using the Node API with outputs formatted for easy reading. <br>
-            <br><br>
-            <i>- FlyingPig</i><br><br>
-            <a target="_blank" href="https://github.com/FlyingPig69/ergo-node-explorer" style="color:white;">
-                <img src="{{ url_for('static', filename='github-mark-white.png') }}" height="30" width="30"> Source
-            </a>
+            Early version, may crash or be taken down at any point, but so far it's been pretty reliable.<br>
+            <span style="color:red;"><b>Transaction lists do not include unconfirmed transactions...yet!</b> </span>
+            <div>
+                 <a target="_blank" href="https://github.com/FlyingPig69/ergo-node-explorer" style="color:white;">
+                <img src="{{ url_for('static', filename='github-mark-white.png') }}" height="30" width="30">
+            </a>           <i>- FlyingPig</i><br><br>
+            </div>
+
+
             <br><br>
         </div>
     </div>
