@@ -45,8 +45,9 @@
                 <div class="flex-container">
                     <input type="text" name="search_text" id="search_text" class="form-control custom-search-box" placeholder="Search text...">
                     <select name="search_type" id="search_type" class="form-control custom-search-lov">
-                        <option value="box_id">Box ID</option>
                         <option value="transaction_id">Transaction ID</option>
+                        <option value="address">Address</option>
+                        <option value="box_id">Box ID</option>
                     </select>
                     <button type="submit" class="btn btn-dark custom-search-btn">Search</button>
                 </div>
@@ -78,7 +79,7 @@
             {{ box_data.creationHeight }}<br><br>
 
             <strong>Address:</strong><br>
-            <a href="https://explorer.ergoplatform.com/en/addresses/{{ box_data.address }}" id="address">{{ box_data.address }}</a>
+            <a href="https://{{flask_url}}/address/{{ box_data.address }}" id="address">{{ box_data.address }}</a>
             <button onclick="copyToClipboard('address')" class="clipboard-icon">📋</button><br><br>
 
             <strong>Ergotree:</strong><br>
