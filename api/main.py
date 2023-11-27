@@ -6,17 +6,24 @@ import json
 app = Flask(__name__)
 
 # Define the base URL
-base_url= 'http://213.239.193.208:9053'
-flask_url = 'https://ergo-node-explorer.vercel.app'
+base_url = 'http://213.239.193.208:9053'
+flask_url = 'https://ergo-node-explorer.vercel.app/'
 
 # Define specific paths
 transaction_path = '/blockchain/transaction/'
+transaction_u_path= '/transactions/unconfirmed/byTransactionId/'
 token_path = '/blockchain/token/'
-address_path = '/blockchain/transaction/byAddress/'
+address_path = '/blockchain/balance'
+
 box_path = '/blockchain/box/'
 indexed_path='/blockchain/indexedHeight'
 info_path ='/info'
 block_path = '/blocks/'
+
+headers = {
+    "accept": "application/json",
+    "Content-Type": "application/json",
+}
 
 def get_url(endpoint):
     return base_url + endpoint
@@ -28,7 +35,7 @@ def get_token_name(token_id):
         token_data = token_response.json()
     return token_data.get('name', 'Unknown'), token_data.get('decimals', 0),token_data.get('description')
 
-def process_transaction(transaction_id):
+def process_transaction(transaction_id): #process transaction and split into input/output list
     transaction_url = get_url(f"{transaction_path}byId/{transaction_id}")
     transaction_response = requests.get(transaction_url)
 
@@ -95,8 +102,6 @@ def index():
     height=[]
     timestamp=[]
 
-
-
     for i in range(5):
         result_header_id, result_no_txs = block2header(info_data['fullHeight']-i)
         height.append(info_data['fullHeight']-i)
@@ -112,7 +117,7 @@ def index():
     return render_template('index.html', info_data=info_data, url=info_url,flask_url=flask_url,base_url=base_url, header_id=header_id,no_txs=no_txs,height=height,timestamp=timestamp,indexed_height=indexed_height)
 
 
-@app.route('/transaction_details/<transaction_id>')
+@app.route('/transactions/<transaction_id>') #render tranaction page
 def transaction_details(transaction_id):
     transaction_data = process_transaction(transaction_id)
 
@@ -141,7 +146,15 @@ def block2header(block_height):
 
     return (header_id,no_txs)
 
+@app.route('/')
+def process_box(box_id):
 
+    transaction_url = get_url(f"{box_path}byId/{box_id}")
+    transaction_response = requests.get(transaction_url)
+
+    if transaction_response.status_code == 200:
+        transaction_data = transaction_response.json()
+        return (transaction_data, transaction_url)
 
 
 @app.route('/boxid/<box_id>')
@@ -190,6 +203,11 @@ def blocks_details(header):
 
     no_txs = len(transaction_data['blockTransactions']['transactions'])
     transaction_ids = [transaction['id'] for transaction in transaction_data['blockTransactions']['transactions']]
+    transaction_details = []
+
+    for i in transaction_ids:
+        process_tx = process_transaction(i);
+        transaction_details.append(process_tx)
 
     value = []
     for transaction in transaction_data['blockTransactions']['transactions']:
@@ -197,23 +215,9 @@ def blocks_details(header):
         value.append(total_value)
 
     if transaction_data:
-        return render_template('blocks.html', transaction_details= transaction_data['blockTransactions']['transactions'], flask_url=flask_url, transaction_ids=transaction_ids,header=header,no_txs=no_txs,value=value, timestamp=timestamp)
+        return render_template('blocks.html', transaction_details=transaction_details, flask_url=flask_url,header_data=header_data,no_txs=no_txs,value=value, timestamp=timestamp)
     else:
         return "Failed to retrieve transaction details."
-
-
-
-@app.route('/')
-def process_box(box_id):
-
-    transaction_url = get_url(f"{box_path}byId/{box_id}")
-    transaction_response = requests.get(transaction_url)
-
-    if transaction_response.status_code == 200:
-        transaction_data = transaction_response.json()
-        return (transaction_data, transaction_url)
-
-
 
 
 @app.route('/search', methods=['GET', 'POST'])
@@ -235,15 +239,26 @@ def search_transaction():
             except TypeError as e:
                 error_message = "An error occurred: {}".format(e)
                 return render_template('error_template.html', error_message=error_message)
-        elif search_type == 'token_id':
+        elif search_type == 'address':
             try:
-                return "Search by Token ID: " + search_text
+                return redirect(url_for('address_details', address=search_text))
             except TypeError as e:
                 error_message = "An error occurred: {}".format(e)
                 return render_template('error_template.html', error_message=error_message)
 
 
+@app.route('/address/<address>')
+def address_details(address):
+    print("it went here")
 
+    data = requests.post(base_url+address_path, headers=headers, data=address)
+    address_data=data.json()
+
+    if address_data:
+
+        return render_template('address.html', address=address, address_data=address_data, flask_url=flask_url)
+    else:
+        return "Failed to retrieve transaction details."
 
 if __name__ == '__main__':
     app.run(host="0.0.0.0", debug=False, threaded=True)
