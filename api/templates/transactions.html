@@ -89,8 +89,9 @@
                 <div class="flex-container">
                     <input type="text" name="search_text" id="search_text" class="form-control custom-search-box" placeholder="Search text...">
                     <select name="search_type" id="search_type" class="form-control custom-search-lov">
-                        <option value="box_id">Box ID</option>
                         <option value="transaction_id">Transaction ID</option>
+                        <option value="address">Address</option>
+                        <option value="box_id">Box ID</option>
                     </select>
                     <!-- Add the search button here -->
                     <button type="submit" class="btn btn-dark custom-search-btn">Search</button>
@@ -134,7 +135,7 @@
 
                             <td class="address">
                               <span id="addressid">
-                                <a href="https://explorer.ergoplatform.com/en/addresses/{{ input_asset['address'] }}">{{ input_asset['address']}}</a>
+                                <a href="{{flask_url}}/address/{{ input_asset['address'] }}">{{ input_asset['address']}}</a>
                               </span>
                               <button onclick="copyToClipboard('addressid')" class="clipboard-icon">📋</button><br>
 
@@ -203,7 +204,7 @@
 
 
                                         <td class="address">
-                                        <span id="addressid"><a href="https://explorer.ergoplatform.com/en/addresses/{{ output_asset['address'] }}">{{ output_asset['address']}}</span></a>
+                                       <a href="{{flask_url}}/address/{{ output_asset['address'] }}">{{ output_asset['address']}}</a>
                                         <button onclick="copyToClipboard('addressid')" class="clipboard-icon">📋</button><br>
                                         <div style="font-size:12px;">BoxId: <a href="{{flask_url}}/boxid/{{ output_asset['box_id']}}">
                                         <span id="box_id" style="font-size: smaller;">{{ output_asset['box_id']}}</span>
