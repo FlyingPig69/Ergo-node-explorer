@@ -108,13 +108,13 @@
                                                 {% for asset in input_asset['assets'] %}
                                                     {{ asset['token_name'] }}
                                                     {% if asset['amount'] is defined %}
-                                                        {{ asset['amount'] }}
-                                                        {% if asset.get('decimals', 0) > 0 %}
-                                                            ({{ asset['amount'] / (10 ** asset['decimals']) }} {{ asset['token_name'] }})
+                                                        {% if asset.get('decimals') is not none and asset.get('decimals') > 0 %}
+                                                            {{ '{:,}'.format(asset['amount'] / (10 ** asset['decimals'])) }}
+                                                        {% else %}
+                                                            {{ '{:,}'.format(asset['amount']) }}
                                                         {% endif %}
                                                     {% endif %}
                                                     {% if asset['decimals'] is defined %}
-                                                        <br>Decimals: {{ asset['decimals'] }}
                                                     {% endif %}
                                                     {% if not loop.last %}<hr>{% endif %}
                                                 {% endfor %}
@@ -170,23 +170,23 @@
                                             <button class="btn btn-primary btn-smaller expand-asset-button" onclick="toggleAssetBox(this)" {% if not output_asset['assets'] %}style="display: none;"{% endif %}>Show Assets</button>
                                             <button class="btn btn-primary btn-smaller collapse-asset-button" style="display: none;" onclick="toggleAssetBox(this)">Hide Assets</button>
                                             <div class="asset-box" style="font-size:12px;">
-                                                {% if output_asset['assets'] %}
-                                                    {% for asset in output_asset['assets'] %}
-                                                        {{ asset['token_name'] }}
-                                                        {% if asset['amount'] is defined %}
-                                                            {{ asset['amount'] }}
-                                                            {% if asset.get('decimals', 0) > 0 %}
-                                                                ({{ asset['amount'] / (10 ** asset['decimals']) }} {{ asset['token_name'] }})
-                                                            {% endif %}
+                                            {% if output_asset['assets'] %}
+                                                {% for asset in output_asset['assets'] %}
+                                                    {{ asset['token_name'] }}
+                                                    {% if asset['amount'] is defined %}
+                                                        {% if asset.get('decimals') is not none and asset.get('decimals') > 0 %}
+                                                            {{ '{:,}'.format(asset['amount'] / (10 ** asset['decimals'])) }}
+                                                        {% else %}
+                                                            {{'{:,}'.format(asset['amount']) }}
                                                         {% endif %}
-                                                        {% if asset['decimals'] is defined %}
-                                                            <br>Decimals: {{ asset['decimals'] }}
-                                                        {% endif %}
-                                                        {% if not loop.last %}<hr>{% endif %}
-                                                    {% endfor %}
-                                                {% else %}
-                                                    No tokens
-                                                {% endif %}
+                                                    {% endif %}
+                                                    {% if asset['decimals'] is defined %}
+                                                    {% endif %}
+                                                    {% if not loop.last %}<hr>{% endif %}
+                                                {% endfor %}
+                                            {% else %}
+                                                No tokens
+                                            {% endif %}
                                             </div>
                                         </td>
                                     </tr>
