@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=0.01, maximum-scale=2" />
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style_sheet.css') }}"/>
-    <title>Blockchain Box Information</title>
+    <title>Box Information</title>
 </head>
 
 <style>
@@ -98,7 +98,7 @@
 </span>
 <button onclick="copyToClipboard('transactionId')" class="clipboard-icon">📋</button><br>
 <br>
-            {% if asset_details %}
+
             <button class="toggle-assets" onclick="toggleAssets()">Show Tokens</button>
             <button class="toggle-assets" onclick="toggleJson()">Show JSON</button>
             <button class="toggle-assets" onclick="toggleRegisters()">Show Registers</button>
@@ -130,7 +130,6 @@
                 </table>
                 {% else %}
                 <p>No assets in this box.</p>
-                {% endif %}
                 {% endif %}
             </div>
             <div id="registers" style="display: none;">
