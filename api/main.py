@@ -1,3 +1,7 @@
+# Define the base URL
+base_url = 'http://213.239.193.208:9053'
+flask_url = 'https://ergo-node-explorer.vercel.app/'
+
 from flask import Flask, render_template, request, redirect, url_for
 import requests
 from datetime import datetime
@@ -147,7 +151,7 @@ def block2header(block_height):
 
     return (header_id,no_txs)
 
-@app.route('/')
+
 def process_box(box_id):
 
     transaction_url = get_url(f"{box_path}byId/{box_id}")
@@ -161,16 +165,18 @@ def process_box(box_id):
 @app.route('/boxid/<box_id>')
 def box_details(box_id):
     try:
+
         box_data,url = process_box(box_id)
         asset_details = []
         for asset in box_data['assets']:
             token_name, decimals, description = get_token_name(asset['tokenId'])
-            amount = asset.get('amount', 0) / (10 ** decimals)
-            asset_details.append({
-                'token_id': asset['tokenId'],
-                'token_name': token_name,
-                'amount': amount,
-                'description': description
+            if token_name != 'Unknown':
+                amount = asset.get('amount') / (10 ** decimals)
+                asset_details.append({
+                    'token_id': asset['tokenId'],
+                    'token_name': token_name,
+                    'amount': amount,
+                    'description': description
             })
 
         box_json=json.dumps(box_data, indent=4)
@@ -263,3 +269,5 @@ def address_details(address):
 
 if __name__ == '__main__':
     app.run(host="0.0.0.0", debug=False, threaded=True)
+
+
