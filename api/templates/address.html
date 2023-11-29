@@ -90,9 +90,9 @@
                         <td style="width: 30%;"><b>{{ token['name'] }}</b></td>
                         <td style="width: 20%;">
                             {% if token['decimals'] > 0 %}
-                                {{ token['amount'] / token['decimals'] }}
+                                {{ '{:,}'.format(token['amount'] / 10 ** token['decimals']) }}
                             {% else %}
-                                {{ token['amount']}}
+                                {{'{:,}'.format(token['amount'])}}
                             {% endif %}
                         </td>
                         <td style="width: 50%;">{{ token['tokenId'] }}</td>
