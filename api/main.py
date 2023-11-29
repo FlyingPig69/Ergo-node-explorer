@@ -7,7 +7,7 @@ app = Flask(__name__)
 
 # Define the base URL
 base_url = 'http://213.239.193.208:9053'
-flask_url = 'https://ergo-node-explorer.vercel.app/'
+flask_url = 'https://ergo-node-explorer.vercel.app/''
 
 # Define specific paths
 transaction_path = '/blockchain/transaction/'
@@ -29,11 +29,11 @@ def get_url(endpoint):
     return base_url + endpoint
 
 def get_token_name(token_id):
-    token_data = {'name': 'Unknown', 'decimals': 0,'description': 'Unknown'}  # Initialize with default values
+    token_data = {'name': 'Unknown','description': 'Unknown'}  # Initialize with default values
     token_response = requests.get(get_url(f"{token_path}byId/{token_id}"))
     if token_response.status_code == 200:
         token_data = token_response.json()
-    return token_data.get('name', 'Unknown'), token_data.get('decimals', 0),token_data.get('description')
+    return token_data.get('name', 'Unknown'), token_data.get('decimals'),token_data.get('description')
 
 def process_transaction(transaction_id): #process transaction and split into input/output list
     transaction_url = get_url(f"{transaction_path}byId/{transaction_id}")
@@ -46,11 +46,12 @@ def process_transaction(transaction_id): #process transaction and split into inp
             asset_details = []
             for asset in assets:
                 token_name, decimals,description = get_token_name(asset['tokenId'])
-                amount = asset.get('amount', 0) / (10 ** decimals)
+                amount = asset.get('amount')
                 asset_details.append({
                     'token_id': asset['tokenId'],
                     'token_name': token_name,
-                    'amount': amount
+                    'amount': amount,
+                    'decimals': decimals
                 })
             return asset_details
 
@@ -171,7 +172,7 @@ def box_details(box_id):
                 'amount': amount,
                 'description': description
             })
-        print("Asset details:",asset_details)
+
         box_json=json.dumps(box_data, indent=4)
 
         if box_data:
