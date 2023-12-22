@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=0.01, maximum-scale=2" />
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style_sheet.css') }}" />
-    <title>Ergo Node Explorer</title>
+    <title>Blockchain Box Information</title>
     <style>
         body {
             background-color: #005b7a;
@@ -69,51 +69,195 @@
         </div>
     </div>
 
-    <div class="container">
-    <h2 style="text-align:center; color:white;">{{ address[:60] + '...' if address|length > 60 else address }}</h2>
-        <div class="card" style="margin-top:0px; width:1000px;">
-        <H2>Erg Balance: {{address_data['confirmed']['nanoErgs']/1000000000}} ({{address_data['unconfirmed']['nanoErgs']/1000000000}} Unconfirmed)
-        </div></H2>
-        <div class="card" style="margin-top:10px; width:1000px; table-layout:auto;border-collapse: collapse;" >
-        <h1 style="color: #444444;">Token Balance</h1>
-        <table style="max-width: 1000px; width: 100%; border-collapse: collapse; margin: 0 auto;">
-            <thead>
-                <tr>
-                    <th style="width: 30%; color: #ffffff;background-color:#005b7a;">Token Name</th>
-                    <th style="width: 20%; color: #ffffff;background-color:#005b7a;">Amount</th>
-                    <th style="width: 50%; color: #ffffff;background-color:#005b7a;">Token ID</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for token in address_data['confirmed']['tokens'] %}
-                    <tr class="{{ 'hidden-row' if loop.index > 4 else '' }}">
-                        <td style="width: 30%;"><b>{{ token['name'] }}</b></td>
-                        <td style="width: 20%;">
-                            {% if token['decimals'] > 0 %}
-                                {{ '{:,}'.format(token['amount'] / 10 ** token['decimals']) }}
-                            {% else %}
-                                {{'{:,}'.format(token['amount'])}}
-                            {% endif %}
-                        </td>
-                        <td style="width: 50%;">{{ token['tokenId'] }}</td>
+    <div class="container" style="align-items: left;">
+
+        <div class="card mb-4" style="margin-bottom:5px;"  >
+
+            <div style="font-size:20px; color: #444444;">
+                <b>Address</b> {{ address[:60] + '...' if address|length > 60 else address }}</br><br>
+                <b>Erg Balance:</b> {{address_data['confirmed']['nanoErgs']/1000000000}} ({{address_data['unconfirmed']['nanoErgs']/1000000000}} Unconfirmed)
+            </div>
+            <br>
+
+            <table style="max-width: 1200px; width: 100%; border-collapse: collapse; margin: 0 auto;">
+                <thead>
+                    <tr>
+                        <th style="width: 30%; color: #ffffff;background-color:#005b7a;">Token Name</th>
+                        <th style="width: 20%; color: #ffffff;background-color:#005b7a;">Balance</th>
+                        <th style="width: 50%; color: #ffffff;background-color:#005b7a;">Token ID</th>
                     </tr>
-                {% endfor %}
-                    <td><button class="expand-button" onclick="toggleRows()">Expand</button></td>
-            </tbody>
-        </table>
+                </thead>
+                <tbody>
+                    {% for token in address_data['confirmed']['tokens'] %}
+                        <tr class="{{ 'hidden-row' if loop.index > 4 else '' }}">
+                            <td style="width: 30%;"><b>{{ token['name'] }}</b></td>
+                            <td style="width: 20%;">
+                                {% if token['decimals'] > 0 %}
+                                    {{ '{:,}'.format(token['amount'] / 10 ** token['decimals']) }}
+                                {% else %}
+                                    {{'{:,}'.format(token['amount'])}}
+                                {% endif %}
+                            </td>
+                            <td style="width: 50%;">{{ token['tokenId'] }}</td>
+                        </tr>
+                    {% endfor %}
+                        <td><button class="expand-button" onclick="toggleRows()">Expand</button></td>
+                </tbody>
+            </table>
         </div>
 
 
-        <div class="card" style="margin-top:0px; width:1000px;">
-        <H2> Latest transactions</H2>
-
-        NOT YET IMPLEMENTED<br>
-            <a href="https://explorer.ergoplatform.com/en/addresses/{{ address }}">Click here for main explorer</a>
+        <h1 class="text-center"><b>Last 50 Transactions</b> </h1>
+        {% for transaction_data in transaction_details %}
+        <div class="card mb-4" style="margin-bottom:5px;"  >
+                <b><p><span id="timestamp">{{ transaction_data['tx_json']['timestamp']}}</span></b></p>
+                <b>Transaction ID:</b>
+                <span id="txid"><a href="{{flask_url}}/transactions/{{ transaction_data['Transaction ID']}}">{{ transaction_data['Transaction ID']}}</span></a>
+                <button onclick="copyToClipboard('txid')" class="clipboard-icon">📋</button><br>
+                <b>Settlement Block:</b> {{ transaction_data['inclusionHeight']}} (                Transaction took <b>{{ transaction_data['inclusionHeight'] - transaction_data['creationHeight'] }} blocks</b> to get confirmed)<br>
         </div>
+         <div style="display: flex; justify-content: space-between; margin-left: 20px; margin-bottom: 20px; background-color: #ffffff; border-radius: 10px; width: 97%;">
+
+            <div style="width: 50%;">
+
+                <div class="column">
+
+                    <div class="table-card" style="margin-left:10px; text-align:center;" >
+                        <br>
+                        <b>Inputs</b>
+                        <br>
+                        <br>
+                        <table class="table" style="border:none;">
+
+                            <tbody>
+                                {% for input_asset in transaction_data['Input Details'] %}
+                                <tr class="{% if loop.index > 5 %}hidden-row{% endif %}">
+
+                            <td class="address">
+                              <span id="addressid">
+                                <a href="{{flask_url}}/address/{{ input_asset['address'] }}">{{ input_asset['address'][:10]}} .... {{ input_asset['address'][-5:]}}</a>
+                              </span>
+                              <button onclick="copyToClipboard('addressid')" class="clipboard-icon">📋</button><br>
+
+                              <div style="font-size:12px;">BoxId: <a href="{{flask_url}}/boxid/{{ input_asset['box_id']}}">
+                                <span id="box_id" style="font-size: smaller;">{{ input_asset['box_id']}}</span>
+                              </a>
+
+                              <button onclick="copyToClipboard('box_id')" class="clipboard-icon">📋</button><br>
+                                   </div>
+                            </td>
+
+
+                                    <td style="width:20%; font-size:12px;">{{ input_asset['value'] }} ERG</td>
+                                    <td class="assets" style="width:25%;">
+                                        <button class="btn btn-primary btn-smaller expand-asset-button" onclick="toggleAssetBox(this)" {% if not input_asset['assets'] %}style="display: none;"{% endif %}>Show Assets</button>
+                                        <button class="btn btn-primary btn-smaller collapse-asset-button" style="display: none;" onclick="toggleAssetBox(this)">Hide Assets</button>
+                                        <div class="asset-box" style="font-size:12px;">
+                                            {% if input_asset['assets'] %}
+                                                {% for asset in input_asset['assets'] %}
+                                                    {{ asset['token_name'] }}
+                                                    {% if asset['amount'] is defined %}
+                                                        {% if asset.get('decimals') is not none and asset.get('decimals') > 0 %}
+                                                            {{ '{:,}'.format(asset['amount'] / (10 ** asset['decimals'])) }}
+                                                        {% else %}
+                                                            {{ '{:,}'.format(asset['amount']) }}
+                                                        {% endif %}
+                                                    {% endif %}
+                                                    {% if asset['decimals'] is defined %}
+                                                    {% endif %}
+                                                    {% if not loop.last %}<hr>{% endif %}
+                                                {% endfor %}
+                                            {% else %}
+                                                No tokens
+                                            {% endif %}
+                                        </div>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                                {% if transaction_data['Input Details']|length > 5 %}
+                                <tr>
+                                    <td>
+                                        <button class="btn btn-primary expand-button" onclick="toggleRows(this)">Expand</button>
+                                    </td>
+                                </tr>
+                                {% endif %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <div class="column" style="display: flex; align-items: center;">
+                <!-- Arrow Column -->
+                <span class="large-arrow">➜</span>
+            </div>
+
+                    <div style="width: 50%;">
+                    <div class="table-card" style="margin-right:10px; margin-left:10px;" >
+                            <br>
+                            <b>Outputs</b><br><br>
+                            <table class="table">
+
+                                <tbody>
+                                    {% for output_asset in transaction_data['Output Details'] %}
+                                    <tr class="{% if loop.index > 5 %}hidden-row{% endif %}">
 
 
 
-</div>
+                                        <td class="address">
+                                        <span id="addressid"><a href="{{flask_url}}/address/{{ output_asset['address'] }}">{{ output_asset['address'][:10]}} .... {{ output_asset['address'][-5:]}}</span></a>
+                                        <button onclick="copyToClipboard('addressid')" class="clipboard-icon">📋</button><br>
+                                        <div style="font-size:12px;">BoxId: <a href="{{flask_url}}/boxid/{{ output_asset['box_id']}}">
+                                        <span id="box_id" style="font-size: smaller;">{{ output_asset['box_id']}}</span>
+                                        </div>
+                                        </a>
+
+                                        </td>
+
+
+                                        <td style="width:20%; font-size:12px;">{{ output_asset['value'] }} ERG</td>
+                                        <td class="assets" style="width:25%;">
+                                            <button class="btn btn-primary btn-smaller expand-asset-button" onclick="toggleAssetBox(this)" {% if not output_asset['assets'] %}style="display: none;"{% endif %}>Show Assets</button>
+                                            <button class="btn btn-primary btn-smaller collapse-asset-button" style="display: none;" onclick="toggleAssetBox(this)">Hide Assets</button>
+                                            <div class="asset-box" style="font-size:12px;">
+                                            {% if output_asset['assets'] %}
+                                                {% for asset in output_asset['assets'] %}
+                                                    {{ asset['token_name'] }}
+                                                    {% if asset['amount'] is defined %}
+                                                        {% if asset.get('decimals') is not none and asset.get('decimals') > 0 %}
+                                                            {{ '{:,}'.format(asset['amount'] / (10 ** asset['decimals'])) }}
+                                                        {% else %}
+                                                            {{'{:,}'.format(asset['amount']) }}
+                                                        {% endif %}
+                                                    {% endif %}
+                                                    {% if asset['decimals'] is defined %}
+                                                    {% endif %}
+                                                    {% if not loop.last %}<hr>{% endif %}
+                                                {% endfor %}
+                                            {% else %}
+                                                No tokens
+                                            {% endif %}
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                    {% if transaction_data['Output Details']|length > 5 %}
+                                    <tr>
+                                        <td>
+                                            <button class="btn btn-primary expand-button" onclick="toggleRows(this)">Expand</button>
+                                        </td>
+                                    </tr>
+                                    {% endif %}
+                                </tbody>
+                            </table>
+                        <br><br>
+                        </div>
+                    </div>
+                </div> <br>       {% endfor %}
+            </div>
+    </div>
+
+
+
 
 
 
@@ -172,6 +316,25 @@ function toggleAssetBox(button) {
         document.execCommand("copy");
         document.body.removeChild(dummy);
     }
+
+document.addEventListener('DOMContentLoaded', function () {
+            // Get all timestamp elements
+            var timestamps = document.querySelectorAll('[id^="timestamp"]');
+
+            timestamps.forEach(function (timestampElement) {
+                var timestamp = parseInt(timestampElement.innerText);
+
+                // Convert timestamp to local time
+                var localTime = new Date(timestamp);
+
+                // Format time and date separately
+                var timeString = localTime.toLocaleTimeString();
+                var dateString = localTime.toLocaleDateString();
+
+                // Update the content of the element with time and date
+                timestampElement.innerText = timeString + '\u00A0\u00A0\u00A0' + dateString;
+            });
+        });
 
     </script>
 
