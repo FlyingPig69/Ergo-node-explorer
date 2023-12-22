@@ -1,7 +1,3 @@
-# Define the base URL
-base_url = 'http://213.239.193.208:9053'
-flask_url = 'https://ergo-node-explorer.vercel.app/'
-
 from flask import Flask, render_template, request, redirect, url_for
 import requests
 from datetime import datetime
@@ -258,16 +254,25 @@ def search_transaction():
 def address_details(address):
     print("it went here")
 
+    transactions = requests.post(base_url+transaction_path+"byAddress?offset=0&limit=50", headers=headers, data=address)
+    transactions = transactions.json()
+    tx_ids = [item["id"] for item in transactions["items"]]
+    print("Tx:", tx_ids)
+
+    transaction_details = []
+
+    for i in tx_ids:
+        process_tx = process_transaction(i);
+        transaction_details.append(process_tx)
+    print(transaction_details)
     data = requests.post(base_url+address_path, headers=headers, data=address)
     address_data=data.json()
 
     if address_data:
 
-        return render_template('address.html', address=address, address_data=address_data, flask_url=flask_url)
+        return render_template('address.html', address=address, address_data=address_data, transaction_details=transaction_details,flask_url=flask_url,)
     else:
         return "Failed to retrieve transaction details."
 
 if __name__ == '__main__':
     app.run(host="0.0.0.0", debug=False, threaded=True)
-
-
