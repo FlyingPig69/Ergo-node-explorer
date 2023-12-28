@@ -219,10 +219,10 @@
 
     <div class="container" >
         <span style="color: orange; font-weight: bold; font-size:12px; text-align:left;" >
-            Tokens with large distributions or wallets 1000s of transactions may not load as free hosting is limited to 10 seconds load times and it's using the very busy public node(sorry!).<br>
+            Tokens with large distributions or wallets 1000s of transactions may not load as free hosting is limited to 10 seconds load times.<br>
         </span>
         <span style="color: white; font-weight: bold; font-size:12px; text-align:left;" >
-            Node Explorer is built in Python using Flask and is not really suitable in a production environment. For best performance download the source from github and run locally.
+            Node Explorer is built in Python using Flask and is not really suitable in a production environment. for best performance download the source from github and run locally.
         </span>
         <div class="card-container style="margin: 0 auto;">
             <!-- Card 1: Node Name -->
@@ -231,6 +231,7 @@
                 <div class="card-text">
                     {{ info_data.name }}<br>
                     {{ base_url }}<br>
+                    <span style="font-size:10px;">Indexed Height: {{indexed_height}}</span>
                     </div>
             </div>
 
