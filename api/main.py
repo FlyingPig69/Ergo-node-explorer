@@ -378,7 +378,7 @@ def calculate_delta(input_details, output_details):
 @app.route('/token/<tokenid>')
 def token_details(tokenid):
     offset = 0
-    limit = 100
+    limit = 16384
     tokens_data = []  # Initialize an empty list to store the results
 
     while True:
