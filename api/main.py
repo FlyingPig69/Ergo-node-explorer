@@ -9,9 +9,9 @@ app = Flask(__name__)
 #todo Add unconfirmed
 
 # Define the base URL
-base_url = 'http://192.168.0.20:9051'
+base_url = 'http://213.239.193.208:9053'
 #base_url= 'http://213.239.193.208:9053'
-flask_url = 'http://192.168.0.20:5000'
+flask_url = 'https://ergo-node-explorer.vercel.app'
 
 # Define specific paths
 transaction_path = '/blockchain/transaction/'
