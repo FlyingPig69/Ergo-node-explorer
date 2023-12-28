@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=0.01, maximum-scale=2" />
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style_sheet.css') }}" />
+    <title>Node Explorer: Token</title>
+    <style>
+        body {
+            background-color: #005b7a;
+            display: flex;
+            justify-content: center;
+            min-height: 100vh;
+            margin: 0;
+        }
+
+        .positive {
+            color: green;
+        }
+
+        .negative {
+            color: red;
+        }
+
+        .card {
+            max-width: 1150px;
+            width: 1150px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            white-space: wrap;
+            word-wrap: break-word;
+            padding: 20px;
+            margin: 20px;
+            border-radius: 8px;
+            background-color: #ffffff;
+            text-align: left;
+            justify-content: left;
+        }
+
+    .hidden-row {
+        display: none;
+        }
+
+    .expand-button {
+    cursor: pointer;
+    color: #ffffff;
+    width:100px;
+    background-color: #005b7a;
+    padding: 5px 10px;
+    border: none;
+    border-radius: 4px;
+    font-size: 12px;
+}
+    </style>
+</head>
+
+<body>
+    <div class="header">
+        <b><a target="_self" href="{{flask_url}}" style="color:white;"> <img
+                    src="{{ url_for('static', filename='ergo_white.png') }}" height="50" width="50"
+                    style="vertical-align: middle; margin-bottom:10px; margin-top:10px;">&nbsp;Node
+                Explorer</a></b>
+        <div class="search-card">
+            <form method="get" action="/search" onsubmit="return validateForm()" class="search-form">
+                <div class="flex-container">
+                    <input type="text" name="search_text" id="search_text"
+                        class="form-control custom-search-box" placeholder="Search text...">
+                    <select name="search_type" id="search_type" class="form-control custom-search-lov">
+                        <option value="address">Address</option>
+                        <option value="transaction_id">Transaction ID</option>
+                        <option value="token_id">Token ID</option>
+                        <option value="box_id">Box ID</option>
+
+                    </select>
+                    <button type="submit" class="btn btn-dark custom-search-btn">Search</button>
+                </div>
+                <br>
+            </form>
+        </div>
+    </div>
+
+    <div class="container" style="align-items: left;">
+
+        <div class="card mb-4" style="margin-bottom:5px;">
+
+            <div style="font-size:20px;">
+                <b>{{name}}</b><br>
+                {{description}}<br><br>
+                There are {{ holders }} token holders
+            </div>
+            <br>
+
+                <div style="text-align: center; font-size:24px; font-weight:bold;">
+                    Rich List
+                </div>
+
+                    <table>
+                        <tr>
+                            <th>#</th>
+                            <th>Address</th>
+                            <th>Total Amount</th>
+                        </tr>
+                        {% for address, amount in tokens_data %}
+                        <tr>
+                            <td>{{ loop.index }}</td>
+                            <td><a href="{{ flask_url }}/address/{{ address }}">{{ address[:60] + '...' if address|length > 60 else address }}</a></td>
+                            <td>{{ '{:,.2f}'.format(amount) }}</td>
+                        </tr>
+                        {% endfor %}
+                    </table>
+
+            </div>
+            <br>
+        </div>
+
+</body>
+    <script>
+
+    </script>
+
+</html>

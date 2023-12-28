@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=0.01, maximum-scale=2" />
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style_sheet.css') }}" />
-    <title>Blockchain Box Information</title>
+    <title>Node Explorer: Address</title>
     <style>
         body {
             background-color: #005b7a;
@@ -13,6 +13,14 @@
             justify-content: center;
             min-height: 100vh;
             margin: 0;
+        }
+
+        .positive {
+            color: green;
+        }
+
+        .negative {
+            color: red;
         }
 
         .card {
@@ -58,8 +66,9 @@
                     <input type="text" name="search_text" id="search_text"
                         class="form-control custom-search-box" placeholder="Search text...">
                     <select name="search_type" id="search_type" class="form-control custom-search-lov">
-                        <option value="transaction_id">Transaction ID</option>
                         <option value="address">Address</option>
+                        <option value="transaction_id">Transaction ID</option>
+                        <option value="token_id">Token ID</option>
                         <option value="box_id">Box ID</option>
                     </select>
                     <button type="submit" class="btn btn-dark custom-search-btn">Search</button>
@@ -71,11 +80,11 @@
 
     <div class="container" style="align-items: left;">
 
-        <div class="card mb-4" style="margin-bottom:5px;"  >
+        <div class="card mb-4" style="margin-bottom:5px;">
 
-            <div style="font-size:20px; color: #444444;">
-                <b>Address</b> {{ address[:60] + '...' if address|length > 60 else address }}</br><br>
-                <b>Erg Balance:</b> {{address_data['confirmed']['nanoErgs']/1000000000}} ({{address_data['unconfirmed']['nanoErgs']/1000000000}} Unconfirmed)
+            <div style="font-size:20px;">
+                <b>Address:</b> <span style="color: #444444;">{{ address[:60] + '...' if address|length > 60 else address }}</br><br></span>
+                <b>Balance:</b> {{address_data['confirmed']['nanoErgs']/1000000000}} ({{address_data['unconfirmed']['nanoErgs']/1000000000}} Unconfirmed) ERG
             </div>
             <br>
 
@@ -98,172 +107,74 @@
                                     {{'{:,}'.format(token['amount'])}}
                                 {% endif %}
                             </td>
-                            <td style="width: 50%;">{{ token['tokenId'] }}</td>
+                            <td style="width: 50%;"><a href="{{ flask_url }}/token/{{ token['tokenId'] }}">{{ token['tokenId'] }}</a></td>
                         </tr>
                     {% endfor %}
-                        <td><button class="expand-button" onclick="toggleRows()">Expand</button></td>
+                    <td><button class="expand-button" onclick="toggleRows()">Expand</button></td>
                 </tbody>
             </table>
         </div>
-
-
-        <h1 class="text-center"><b>Last 5 Transactions</b> </h1>
+        <h1 class="text-center"><b>Transactions </b> </h1>
+        <span style="color: white; margin-left:20px; font-weight:bold;">Page {{ 1 if offset == 0 else offset//10  }}</span>
         {% for transaction_data in transaction_details %}
-        <div class="card mb-4" style="margin-bottom:5px;"  >
-                <b><p><span id="timestamp">{{ transaction_data['tx_json']['timestamp']}}</span></b></p>
-                <b>Transaction ID:</b>
-                <span id="txid"><a href="{{flask_url}}/transactions/{{ transaction_data['Transaction ID']}}">{{ transaction_data['Transaction ID']}}</span></a>
-                <button onclick="copyToClipboard('txid')" class="clipboard-icon">📋</button><br>
-                <b>Settlement Block:</b> {{ transaction_data['inclusionHeight']}} (                Transaction took <b>{{ transaction_data['inclusionHeight'] - transaction_data['creationHeight'] }} blocks</b> to get confirmed)<br>
-        </div>
-         <div style="display: flex; justify-content: space-between; margin-left: 20px; margin-bottom: 20px; background-color: #ffffff; border-radius: 10px; width: 97%;">
+        <div class="card mb-4" style="margin-bottom:5px; margin-top:5px;">
+            <div style="display: flex; justify-content: space-between;">
 
-            <div style="width: 50%;">
+                    <span id="txid">
+                        <a href="{{flask_url}}/transactions/{{ transaction_data['Transaction ID'] }}">
+                            {{ transaction_data['Transaction ID'] }}
+                        </a>
 
-                <div class="column">
+                    </span>
+                <span id="timestamp" style="font-weight: bold;">{{ transaction_data['tx_json']['timestamp'] }}</span>
+            </div>
 
-                    <div class="table-card" style="margin-left:10px; text-align:center;" >
-                        <br>
-                        <b>Inputs</b>
-                        <br>
-                        <br>
-                        <table class="table" style="border:none;">
+            {% if address in transaction_data['delta'] %}
+                <br>
 
-                            <tbody>
-                                {% for input_asset in transaction_data['Input Details'] %}
-                                <tr class="{% if loop.index > 5 %}hidden-row{% endif %}">
+                    <b>
+                    {% if transaction_data['delta'][address]['value'] > 0 %}
+                        <span class="positive">Received {{ transaction_data['delta'][address]['value'] | round(4) | abs }} ERG</span>
+                    {% else %}
+                          <span class="negative">Sent {{ transaction_data['delta'][address]['value'] | round(4) | abs }} ERG</span>
+                    {% endif %}
+                    </b>
+                <br><br>
 
-                            <td class="address">
-                              <span id="addressid">
-                                <a href="{{flask_url}}/address/{{ input_asset['address'] }}">{{ input_asset['address'][:10]}} .... {{ input_asset['address'][-5:]}}</a>
-                              </span>
-                              <button onclick="copyToClipboard('addressid')" class="clipboard-icon">📋</button><br>
+                <b>Tokens</b><br>
+                        {% for token_key, token_value in transaction_data['delta'][address].items() %}
+                {% if token_key != 'value' %}
+                    <span class="{{ 'positive' if token_value > 0 else 'negative' }}">
+                        {% if token_value > 0 %}
+                            Received
+                        {% else %}
+                            Sent
+                        {% endif %}
+                        {{ token_value|round(4)|abs }} {{ token_key[1] }}
+                    </span><br>
+                {% endif %}
+            {% endfor %}
+            <br>
 
-                              <div style="font-size:12px;">BoxId: <a href="{{flask_url}}/boxid/{{ input_asset['box_id']}}">
-                                <span id="box_id" style="font-size: smaller;">{{ input_asset['box_id']}}</span>
-                              </a>
-
-                              <button onclick="copyToClipboard('box_id')" class="clipboard-icon">📋</button><br>
-                                   </div>
-                            </td>
-
-
-                                    <td style="width:20%; font-size:12px;">{{ input_asset['value'] }} ERG</td>
-                                    <td class="assets" style="width:25%;">
-                                        <button class="btn btn-primary btn-smaller expand-asset-button" onclick="toggleAssetBox(this)" {% if not input_asset['assets'] %}style="display: none;"{% endif %}>Show Assets</button>
-                                        <button class="btn btn-primary btn-smaller collapse-asset-button" style="display: none;" onclick="toggleAssetBox(this)">Hide Assets</button>
-                                        <div class="asset-box" style="font-size:12px;">
-                                            {% if input_asset['assets'] %}
-                                                {% for asset in input_asset['assets'] %}
-                                                    {{ asset['token_name'] }}
-                                                    {% if asset['amount'] is defined %}
-                                                        {% if asset.get('decimals') is not none and asset.get('decimals') > 0 %}
-                                                            {{ '{:,}'.format(asset['amount'] / (10 ** asset['decimals'])) }}
-                                                        {% else %}
-                                                            {{ '{:,}'.format(asset['amount']) }}
-                                                        {% endif %}
-                                                    {% endif %}
-                                                    {% if asset['decimals'] is defined %}
-                                                    {% endif %}
-                                                    {% if not loop.last %}<hr>{% endif %}
-                                                {% endfor %}
-                                            {% else %}
-                                                No tokens
-                                            {% endif %}
-                                        </div>
-                                    </td>
-                                </tr>
-                                {% endfor %}
-                                {% if transaction_data['Input Details']|length > 5 %}
-                                <tr>
-                                    <td>
-                                        <button class="btn btn-primary expand-button" onclick="toggleRows(this)">Expand</button>
-                                    </td>
-                                </tr>
-                                {% endif %}
-                            </tbody>
-                        </table>
-                    </div>
+            {% endif %}
+            <br>
+            <div style="display: flex; justify-content: space-between;">
+                <a href="{{flask_url}}/transactions/{{ transaction_data['Transaction ID'] }}"  style="background-color: #005b7a; color: white; padding: 10px; border-radius: 10px; " >Transaction Details</a>
+                <div style="background-color: black; color: white; padding: 10px; border-radius: 10px;">
+                    Confirmations: {{ full_height - transaction_data['inclusionHeight'] }}
                 </div>
             </div>
-            <div class="column" style="display: flex; align-items: center;">
-                <!-- Arrow Column -->
-                <span class="large-arrow">➜</span>
-            </div>
+        </div>
+        {% endfor %}
+        <div>
+            <a href="{{flask_url}}/address/{{address}}?offset={{offset+10}}" style="text-align: right; color: white; margin-left:20px;font-weight: bold;">Next page</a>
+            <br><br>
+        </div>
 
-                    <div style="width: 50%;">
-                    <div class="table-card" style="margin-right:10px; margin-left:10px;" >
-                            <br>
-                            <b>Outputs</b><br><br>
-                            <table class="table">
-
-                                <tbody>
-                                    {% for output_asset in transaction_data['Output Details'] %}
-                                    <tr class="{% if loop.index > 5 %}hidden-row{% endif %}">
-
-
-
-                                        <td class="address">
-                                        <span id="addressid"><a href="{{flask_url}}/address/{{ output_asset['address'] }}">{{ output_asset['address'][:10]}} .... {{ output_asset['address'][-5:]}}</span></a>
-                                        <button onclick="copyToClipboard('addressid')" class="clipboard-icon">📋</button><br>
-                                        <div style="font-size:12px;">BoxId: <a href="{{flask_url}}/boxid/{{ output_asset['box_id']}}">
-                                        <span id="box_id" style="font-size: smaller;">{{ output_asset['box_id']}}</span>
-                                        </div>
-                                        </a>
-
-                                        </td>
-
-
-                                        <td style="width:20%; font-size:12px;">{{ output_asset['value'] }} ERG</td>
-                                        <td class="assets" style="width:25%;">
-                                            <button class="btn btn-primary btn-smaller expand-asset-button" onclick="toggleAssetBox(this)" {% if not output_asset['assets'] %}style="display: none;"{% endif %}>Show Assets</button>
-                                            <button class="btn btn-primary btn-smaller collapse-asset-button" style="display: none;" onclick="toggleAssetBox(this)">Hide Assets</button>
-                                            <div class="asset-box" style="font-size:12px;">
-                                            {% if output_asset['assets'] %}
-                                                {% for asset in output_asset['assets'] %}
-                                                    {{ asset['token_name'] }}
-                                                    {% if asset['amount'] is defined %}
-                                                        {% if asset.get('decimals') is not none and asset.get('decimals') > 0 %}
-                                                            {{ '{:,}'.format(asset['amount'] / (10 ** asset['decimals'])) }}
-                                                        {% else %}
-                                                            {{'{:,}'.format(asset['amount']) }}
-                                                        {% endif %}
-                                                    {% endif %}
-                                                    {% if asset['decimals'] is defined %}
-                                                    {% endif %}
-                                                    {% if not loop.last %}<hr>{% endif %}
-                                                {% endfor %}
-                                            {% else %}
-                                                No tokens
-                                            {% endif %}
-                                            </div>
-                                        </td>
-                                    </tr>
-                                    {% endfor %}
-                                    {% if transaction_data['Output Details']|length > 5 %}
-                                    <tr>
-                                        <td>
-                                            <button class="btn btn-primary expand-button" onclick="toggleRows(this)">Expand</button>
-                                        </td>
-                                    </tr>
-                                    {% endif %}
-                                </tbody>
-                            </table>
-                        <br><br>
-                        </div>
-                    </div>
-                </div> <br>       {% endfor %}
-            </div>
     </div>
 
-
-
-
-
-
-
-
 </body>
+
 
     <script>
     var isExpanded = false;

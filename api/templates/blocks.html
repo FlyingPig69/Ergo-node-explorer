@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=0.01, maximum-scale=2" />
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style_sheet.css') }}" />
-    <title>Blockchain Box Information</title>
+    <title>Node Explorer: Blocks</title>
     <style>
         body {
             background-color: #005b7a;
@@ -43,8 +43,9 @@
                     <input type="text" name="search_text" id="search_text"
                         class="form-control custom-search-box" placeholder="Search text...">
                     <select name="search_type" id="search_type" class="form-control custom-search-lov">
-                        <option value="transaction_id">Transaction ID</option>
                         <option value="address">Address</option>
+                        <option value="transaction_id">Transaction ID</option>
+                        <option value="token_id">Token ID</option>
                         <option value="box_id">Box ID</option>
                     </select>
                     <button type="submit" class="btn btn-dark custom-search-btn">Search</button>
@@ -86,7 +87,7 @@
 
                             <td class="address">
                               <span id="addressid">
-                                <a href="{{flask_url}}/address/{{ input_asset['address'] }}">{{ input_asset['address']}}</a>
+                                <a href="{{flask_url}}/address/{{ input_asset['address'] }}">{{ input_asset['address'][:10]}} .... {{ input_asset['address'][-5:]}}</a>
                               </span>
                               <button onclick="copyToClipboard('addressid')" class="clipboard-icon">📋</button><br>
 
@@ -155,7 +156,7 @@
 
 
                                         <td class="address">
-                                        <span id="addressid"><a href="{{flask_url}}/address/{{ output_asset['address'] }}">{{ output_asset['address']}}</span></a>
+                                        <span id="addressid"><a href="{{flask_url}}/address/{{ output_asset['address'] }}">{{ output_asset['address'][:10]}} .... {{ output_asset['address'][-5:]}}</span></a>
                                         <button onclick="copyToClipboard('addressid')" class="clipboard-icon">📋</button><br>
                                         <div style="font-size:12px;">BoxId: <a href="{{flask_url}}/boxid/{{ output_asset['box_id']}}">
                                         <span id="box_id" style="font-size: smaller;">{{ output_asset['box_id']}}</span>

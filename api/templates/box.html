@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=0.01, maximum-scale=2" />
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style_sheet.css') }}"/>
-    <title>Ergo Node Explorer</title>
+    <title>Node Explorer: Box</title>
 </head>
 
 <style>
@@ -45,8 +45,9 @@
                 <div class="flex-container">
                     <input type="text" name="search_text" id="search_text" class="form-control custom-search-box" placeholder="Search text...">
                     <select name="search_type" id="search_type" class="form-control custom-search-lov">
-                        <option value="transaction_id">Transaction ID</option>
                         <option value="address">Address</option>
+                        <option value="transaction_id">Transaction ID</option>
+                        <option value="token_id">Token ID</option>
                         <option value="box_id">Box ID</option>
                     </select>
                     <button type="submit" class="btn btn-dark custom-search-btn">Search</button>
@@ -79,7 +80,7 @@
             {{ box_data.creationHeight }}<br><br>
 
             <strong>Address:</strong><br>
-            <a href="https://{{flask_url}}/address/{{ box_data.address }}" id="address">{{ box_data.address }}</a>
+            <a href="{{flask_url}}/address/{{ box_data.address }}" id="address">{{ box_data.address }}</a>
             <button onclick="copyToClipboard('address')" class="clipboard-icon">📋</button><br><br>
 
             <strong>Ergotree:</strong><br>

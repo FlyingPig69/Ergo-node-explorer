@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=0.01, maximum-scale=2" />
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style_sheet.css') }}" />
-    <title>Ergo Node Explorer</title>
+    <title>Blockchain Box Information</title>
 </head>
 
 <style>
@@ -135,7 +135,7 @@
 
                             <td class="address">
                               <span id="addressid">
-                                <a href="{{flask_url}}/address/{{ input_asset['address'] }}">{{ input_asset['address']}}</a>
+                                <a href="{{flask_url}}/address/{{ input_asset['address'] }}">{{ input_asset['address'][:10]}} .... {{ input_asset['address'][-5:]}}</a>
                               </span>
                               <button onclick="copyToClipboard('addressid')" class="clipboard-icon">📋</button><br>
 
@@ -204,7 +204,7 @@
 
 
                                         <td class="address">
-                                       <a href="{{flask_url}}/address/{{ output_asset['address'] }}">{{ output_asset['address']}}</a>
+                                       <a href="{{flask_url}}/address/{{ output_asset['address'] }}">{{ output_asset['address'][:10]}} .... {{ output_asset['address'][-5:]}}</a>
                                         <button onclick="copyToClipboard('addressid')" class="clipboard-icon">📋</button><br>
                                         <div style="font-size:12px;">BoxId: <a href="{{flask_url}}/boxid/{{ output_asset['box_id']}}">
                                         <span id="box_id" style="font-size: smaller;">{{ output_asset['box_id']}}</span>
