@@ -10,7 +10,6 @@ app = Flask(__name__)
 
 # Define the base URL
 base_url = 'http://213.239.193.208:9053'
-#base_url= 'http://213.239.193.208:9053'
 flask_url = 'https://ergo-node-explorer.vercel.app'
 
 # Define specific paths
@@ -420,4 +419,4 @@ def token_details(tokenid):
         return "Failed to retrieve transaction details."
 
 if __name__ == '__main__':
-    app.run(host="0.0.0.0", debug=True, threaded=True)
+    app.run(host="0.0.0.0", debug=False, threaded=True)
