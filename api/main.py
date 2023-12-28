@@ -9,7 +9,7 @@ app = Flask(__name__)
 #todo Add unconfirmed
 
 # Define the base URL
-base_url = 'http://213.239.193.208:9053'
+base_url= 'http://213.239.193.208:9053'
 flask_url = 'https://ergo-node-explorer.vercel.app'
 
 # Define specific paths
@@ -357,6 +357,13 @@ def calculate_delta(input_details, output_details):
         for token_details, amount in token_amounts.items():
             token_id, token_name, decimals = token_details
 
+            # Check if decimals is None or not a valid numeric value
+            if decimals is None or not isinstance(decimals, (int, float)):
+                # Handle the case where decimals is None or not a valid numeric value
+                # You might raise an error, log a message, or provide a default value
+                print(f"Skipping entry with invalid decimals: {token_details}")
+                continue
+
             # Adjust the amount based on the decimal value
             adjusted_amount = amount / 10 ** decimals
 
@@ -420,4 +427,3 @@ def token_details(tokenid):
 
 if __name__ == '__main__':
     app.run(host="0.0.0.0", debug=False, threaded=True)
-
