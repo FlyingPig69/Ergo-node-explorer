@@ -1,3 +1,7 @@
+# Define the base URL
+base_url= 'http://213.239.193.208:9053'
+flask_url = 'https://ergo-node-explorer.vercel.app'
+
 from flask import Flask, render_template, request, redirect, url_for
 import requests
 from collections import defaultdict
@@ -79,16 +83,56 @@ def process_transaction(transaction_id): #process transaction and split into inp
 
         delta_result = calculate_delta(input_details, output_details)
 
-#----get delta for ERG and Tokens per address
-#        for address, deltas in delta_result.items():
-#            print(f"Address: {address}")
-#            for key, value in deltas.items():
-#                if key == 'value':
-#                    print(f"  Delta Value: {value}")
-#                else:
-#                    token_id, token_name, decimals = key
-#                    print(f"  Token ID: {token_id}, Token Name: {token_name}, Decimals: {decimals}, Delta Amount: {value}")
-#----
+        return {
+            'Transaction ID': transaction_id,
+            'inclusionHeight': transaction_data.get('inclusionHeight', 'inclusionHeight'),
+            'creationHeight': transaction_data["outputs"][0]["creationHeight"],
+            'Input Details': input_details,
+            'Output Details': output_details,
+            'delta': delta_result,
+            'tx_json': transaction_data
+        }
+    else:
+        return None
+
+def process_transaction(transaction_id): #process transaction and split into input/output list
+    transaction_url = get_url(f"{transaction_path}byId/{transaction_id}")
+    transaction_response = requests.get(transaction_url)
+
+    if transaction_response.status_code == 200:
+        transaction_data = transaction_response.json()
+        token_ids_to_check = [] #initialize tokens to check for delta
+        def process_assets(assets):
+            asset_details = []
+            for asset in assets:
+                token_name, decimals,description = get_token_name(asset['tokenId'])
+                amount = asset.get('amount')
+                token_ids_to_check.append(asset['tokenId'])
+                asset_details.append({
+                    'token_id': asset['tokenId'],
+                    'token_name': token_name,
+                    'amount': amount,
+                    'decimals': decimals
+                })
+            return asset_details
+
+        def process_input_output_data(data, data_type):
+            details = []
+            for data_item in transaction_data.get(data_type, []):
+                assets = data_item.get('assets', [])
+                item_details = {
+                    'address': data_item['address'],
+                    'value': round(data_item['value'] / 1000000000, 4),
+                    'assets': process_assets(assets),
+                    'box_id': data_item['boxId']
+                }
+                details.append(item_details)
+            return details
+
+        input_details = process_input_output_data('inputs', 'inputs')
+        output_details = process_input_output_data('outputs', 'outputs')
+
+        delta_result = calculate_delta(input_details, output_details)
 
         return {
             'Transaction ID': transaction_id,
@@ -101,6 +145,50 @@ def process_transaction(transaction_id): #process transaction and split into inp
         }
     else:
         return None
+
+def process_address_transaction(transaction_data): #process transaction for an address and split into input/output list
+
+    token_ids_to_check = [] #initialize tokens to check for delta
+    def process_assets(assets):
+        asset_details = []
+        for asset in assets:
+            token_name, decimals,description = get_token_name(asset['tokenId'])
+            amount = asset.get('amount')
+            token_ids_to_check.append(asset['tokenId'])
+            asset_details.append({
+                'token_id': asset['tokenId'],
+                'token_name': token_name,
+                'amount': amount,
+                'decimals': decimals
+            })
+        return asset_details
+
+    def process_input_output_data(data, data_type):
+        details = []
+        for data_item in transaction_data.get(data_type, []):
+            assets = data_item.get('assets', [])
+            item_details = {
+                'address': data_item['address'],
+                'value': round(data_item['value'] / 1000000000, 4),
+                'assets': process_assets(assets),
+                'box_id': data_item['boxId']
+            }
+            details.append(item_details)
+        return details
+
+    input_details = process_input_output_data('inputs', 'inputs')
+    output_details = process_input_output_data('outputs', 'outputs')
+
+    delta_result = calculate_delta(input_details, output_details)
+
+    return {
+        'inclusionHeight': transaction_data.get('inclusionHeight', 'inclusionHeight'),
+        'creationHeight': transaction_data["outputs"][0]["creationHeight"],
+        'Input Details': input_details,
+        'Output Details': output_details,
+        'delta': delta_result,
+        'tx_json': transaction_data
+    }
 
 @app.route('/')
 def index():
@@ -181,7 +269,6 @@ def process_box(box_id):
 @app.route('/boxid/<box_id>')
 def box_details(box_id):
     try:
-
         box_data,url = process_box(box_id)
         asset_details = []
         for asset in box_data['assets']:
@@ -283,13 +370,13 @@ def address_details(address):
 
     transactions = requests.post(base_url+transaction_path+f"byAddress?offset={offset}&limit=10", headers=headers, data=address)
     transactions = transactions.json()
-    tx_ids = [item["id"] for item in transactions["items"]]
+    #tx_ids = [item["id"] for item in transactions["items"]]
     #print("Tx:", tx_ids)
 
     transaction_details = []
 
-    for i in tx_ids:
-        process_tx = process_transaction(i);
+    for i in transactions['items']:
+        process_tx = process_address_transaction(i);
         transaction_details.append(process_tx)
 
     data = requests.post(base_url+address_path, headers=headers, data=address)
@@ -359,8 +446,6 @@ def calculate_delta(input_details, output_details):
 
             # Check if decimals is None or not a valid numeric value
             if decimals is None or not isinstance(decimals, (int, float)):
-                # Handle the case where decimals is None or not a valid numeric value
-                # You might raise an error, log a message, or provide a default value
                 print(f"Skipping entry with invalid decimals: {token_details}")
                 continue
 
@@ -380,7 +465,6 @@ def token_details(tokenid):
     offset = 0
     limit = 16384
     tokens_data = []  # Initialize an empty list to store the results
-
     while True:
         token_url = get_url(f"{token_u_path}{tokenid}?offset={offset}&limit={limit}")
         tokens = requests.get(token_url)
@@ -393,8 +477,6 @@ def token_details(tokenid):
             for item in data:
                 # Access values in each dictionary
                 value_of_key = item.get('key')  # Replace 'key' with the actual key in your data
-                #print(value_of_key)
-                # Append the entire dictionary if needed
                 tokens_data.append(item)
 
             # Check if there are more items
@@ -405,7 +487,6 @@ def token_details(tokenid):
         else:
             print(f"Error: {tokens.status_code}")
             break  # Break the loop in case of an error
-
     name, decimals, description = get_token_name(tokenid)
     decimals = 10 ** decimals
     grouped_data = defaultdict(int)
@@ -427,3 +508,4 @@ def token_details(tokenid):
 
 if __name__ == '__main__':
     app.run(host="0.0.0.0", debug=False, threaded=True)
+
