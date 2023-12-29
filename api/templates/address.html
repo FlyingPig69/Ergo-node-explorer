@@ -25,7 +25,7 @@
 
         .card {
             max-width: 1150px;
-            width: 1150px;
+            width: 1000px;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
             white-space: wrap;
             word-wrap: break-word;
@@ -83,50 +83,46 @@
         <div class="card mb-4" style="margin-bottom:5px;">
 
             <div style="font-size:20px;">
-                <b>Address:</b> <span style="color: #444444;">{{ address[:60] + '...' if address|length > 60 else address }}</br><br></span>
-                <b>Balance:</b> {{address_data['confirmed']['nanoErgs']/1000000000}} ({{address_data['unconfirmed']['nanoErgs']/1000000000}} Unconfirmed) ERG
+                 <span style="color: #000280; font-weight:bold;">{{ address[:60] + '...' if address|length > 60 else address }}</br><br></span>
+                <b>{{address_data['confirmed']['nanoErgs']/1000000000}} ERG</b><br>
+                ({{address_data['unconfirmed']['nanoErgs']/1000000000}} Unconfirmed)
             </div>
             <br>
-
-            <table style="max-width: 1200px; width: 100%; border-collapse: collapse; margin: 0 auto;">
-                <thead>
-                    <tr>
-                        <th style="width: 30%; color: #ffffff;background-color:#005b7a;">Token Name</th>
-                        <th style="width: 20%; color: #ffffff;background-color:#005b7a;">Balance</th>
-                        <th style="width: 50%; color: #ffffff;background-color:#005b7a;">Token ID</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for token in address_data['confirmed']['tokens'] %}
-                        <tr class="{{ 'hidden-row' if loop.index > 4 else '' }}">
-                            <td style="width: 30%;"><b>{{ token['name'] }}</b></td>
-                            <td style="width: 20%;">
-                                {% if token['decimals'] > 0 %}
-                                    {{ '{:,}'.format(token['amount'] / 10 ** token['decimals']) }}
-                                {% else %}
-                                    {{'{:,}'.format(token['amount'])}}
-                                {% endif %}
-                            </td>
-                            <td style="width: 50%;"><a href="{{ flask_url }}/token/{{ token['tokenId'] }}">{{ token['tokenId'] }}</a></td>
-                        </tr>
-                    {% endfor %}
-                    <td><button class="expand-button" onclick="toggleRows()">Expand</button></td>
-                </tbody>
-            </table>
+            <span style="font-size:20px; font-weight:bold;">Tokens:</span>
+<table style="max-width: 1000px; width: 100%; border-collapse: collapse; margin: 0 auto;">
+    <tbody>
+        {% for token in address_data['confirmed']['tokens'] %}
+            <tr class="{{ 'hidden-row' if loop.index > 4 else '' }}">
+                <td style="width: 15%; font-size:14px;">{{ token['name'] }}</td>
+                <td style="width: 15%; font-size:14px;">
+                    {% if token['decimals'] > 0 %}
+                        {{ '{:,}'.format(token['amount'] / 10 ** token['decimals']) }}
+                    {% else %}
+                        {{'{:,}'.format(token['amount'])}}
+                    {% endif %}
+                </td>
+                <td style="width: 70%; font-size:14px;"><a href="{{ flask_url }}/token/{{ token['tokenId'] }}">{{ token['tokenId'] }}</a></td>
+            </tr>
+        {% endfor %}
+        <tr>
+            <td colspan="3"><button class="expand-button" onclick="toggleRows()">Expand</button></td>
+        </tr>
+    </tbody>
+</table>
         </div>
         <h1 class="text-center"><b>Transactions </b> </h1>
         <span style="color: white; margin-left:20px; font-weight:bold;">Page {{ 1 if offset == 0 else offset//10  }}</span>
         {% for transaction_data in transaction_details %}
         <div class="card mb-4" style="margin-bottom:5px; margin-top:5px;">
             <div style="display: flex; justify-content: space-between;">
-
+            <span id="timestamp" style="font-weight: bold;">{{ transaction_data['tx_json']['timestamp'] }}</span>
                     <span id="txid">
-                        <a href="{{flask_url}}/transactions/{{ transaction_data['Transaction ID'] }}">
-                            {{ transaction_data['Transaction ID'] }}
+                        <a href="{{flask_url}}/transactions/{{ transaction_data['tx_json']['id'] }}">
+                            {{ transaction_data['tx_json']['id'] }}
                         </a>
 
                     </span>
-                <span id="timestamp" style="font-weight: bold;">{{ transaction_data['tx_json']['timestamp'] }}</span>
+
             </div>
 
             {% if address in transaction_data['delta'] %}
@@ -159,10 +155,10 @@
             {% endif %}
             <br>
             <div style="display: flex; justify-content: space-between;">
-                <a href="{{flask_url}}/transactions/{{ transaction_data['Transaction ID'] }}"  style="background-color: #005b7a; color: white; padding: 10px; border-radius: 10px; " >Transaction Details</a>
                 <div style="background-color: black; color: white; padding: 10px; border-radius: 10px;">
                     Confirmations: {{ full_height - transaction_data['inclusionHeight'] }}
                 </div>
+                <a href="{{flask_url}}/transactions/{{ transaction_data['tx_json']['id'] }}"  style="background-color: #005b7a; color: white; padding: 10px; border-radius: 10px; " >Transaction Details</a>
             </div>
         </div>
         {% endfor %}
