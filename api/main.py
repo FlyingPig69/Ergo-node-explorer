@@ -1,7 +1,3 @@
-# Define the base URL
-base_url= 'http://213.239.193.208:9053'
-flask_url = 'https://ergo-node-explorer.vercel.app'
-
 from flask import Flask, render_template, request, redirect, url_for
 import requests
 from collections import defaultdict
