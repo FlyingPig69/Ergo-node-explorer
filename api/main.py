@@ -9,7 +9,7 @@ app = Flask(__name__)
 #todo Add unconfirmed
 
 # Define the base URL
-base_url= 'http://159.65.11.55:9053'
+base_url= 'http://ergo1.oette.info:9053'
 flask_url = 'https://ergo-node-explorer.vercel.app'
 
 # Define specific paths
