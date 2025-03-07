@@ -1,15 +1,29 @@
 from flask import Flask, render_template, request, redirect, url_for
 import requests
+from requests.adapters import HTTPAdapter
+from urllib3.util.retry import Retry
 from collections import defaultdict
 from datetime import datetime
 import json
+import time
+
+retry_strategy = Retry(
+    total=5,  # Max retries
+    backoff_factor=5,  # Wait time: 5s, 10s, 20s, etc. (exponential backoff)
+    status_forcelist=[500, 502, 503, 504],  # Retry only on these HTTP errors
+    allowed_methods=["GET", "POST"]  # Which HTTP methods to retry
+)
+session = requests.Session()
+adapter = HTTPAdapter(max_retries=retry_strategy)
+session.mount("http://", adapter)
+session.mount("https://", adapter)
 
 app = Flask(__name__)
 
 #todo Add unconfirmed
 
 # Define the base URL
-base_url= 'http://ergo1.oette.info:9053'
+base_url= 'http://213.239.193.208:9053'
 flask_url = 'https://ergo-node-explorer.vercel.app'
 
 # Define specific paths
@@ -35,14 +49,14 @@ def get_url(endpoint):
 
 def get_token_name(token_id):
     token_data = {'name': 'Unknown','description': 'Unknown'}  # Initialize with default values
-    token_response = requests.get(get_url(f"{token_path}byId/{token_id}"))
+    token_response = session.get(get_url(f"{token_path}byId/{token_id}"))
     if token_response.status_code == 200:
         token_data = token_response.json()
     return token_data.get('name', 'Unknown'), token_data.get('decimals'),token_data.get('description')
 
 def process_transaction(transaction_id): #process transaction and split into input/output list
     transaction_url = get_url(f"{transaction_path}byId/{transaction_id}")
-    transaction_response = requests.get(transaction_url)
+    transaction_response = session.get(transaction_url)
 
     if transaction_response.status_code == 200:
         transaction_data = transaction_response.json()
@@ -93,7 +107,7 @@ def process_transaction(transaction_id): #process transaction and split into inp
 
 def process_transaction(transaction_id): #process transaction and split into input/output list
     transaction_url = get_url(f"{transaction_path}byId/{transaction_id}")
-    transaction_response = requests.get(transaction_url)
+    transaction_response = session.get(transaction_url)
 
     if transaction_response.status_code == 200:
         transaction_data = transaction_response.json()
@@ -190,17 +204,20 @@ def process_address_transaction(transaction_data): #process transaction for an a
 def index():
     # Redirect to the index.html page
     info_url = get_url(f"{info_path}")
-    info = requests.get(info_url)
+    info = session.get(info_url)
+    print("info url", info_url)
     if info.status_code == 200:
         info_data = info.json()
 
     #get indexed status
     indexed_url = get_url(f"{indexed_path}")
-    indexed = requests.get(indexed_url)
+
+    indexed = session.get(indexed_url)
     if indexed.status_code == 200:
         indexed_data = indexed.json()
 
     indexed_height=indexed_data['indexedHeight']
+    print("indexed URL:",indexed_url,"  Indexed heigh",indexed_height)
 
     header_id = []
     no_txs = []
@@ -214,7 +231,8 @@ def index():
         no_txs.append(result_no_txs)
         # get header timestamp from header info, need to loop this eventually
         header_url = get_url(f"{block_path}{header_id[i]}/header")
-        header_response = requests.get(header_url)
+
+        header_response = session.get(header_url)
         if header_response.status_code == 200:
             header_data = header_response.json()
             timestamp.append(header_data['timestamp'])
@@ -235,14 +253,16 @@ def transaction_details(transaction_id):
 def block2header(block_height):
 
     block_url = get_url(f"{block_path}at/{block_height}")
-    header_id = requests.get(block_url)
+    print("block url",block_url)
+
+    header_id = session.get(block_url)
     if header_id.status_code == 200:
         header_id = header_id.json()
 
     header_id=header_id[0]
     #get number of transactions
     transaction_url = get_url(f"{block_path}{header_id}")
-    transaction_response = requests.get(transaction_url)
+    transaction_response = session.get(transaction_url)
 
     if transaction_response.status_code == 200:
         transaction_data = transaction_response.json()
@@ -255,7 +275,8 @@ def block2header(block_height):
 def process_box(box_id):
 
     transaction_url = get_url(f"{box_path}byId/{box_id}")
-    transaction_response = requests.get(transaction_url)
+
+    transaction_response = session.get(transaction_url)
 
     if transaction_response.status_code == 200:
         transaction_data = transaction_response.json()
@@ -292,15 +313,16 @@ def blocks_details(header):
 
     #get transactions in block/header
     transaction_url = get_url(f"{block_path}{header}")
-    transaction_response = requests.get(transaction_url)
+
+    transaction_response = session.get(transaction_url)
 
     if transaction_response.status_code == 200:
         transaction_data = transaction_response.json()
 
     #get header timestamp from header info, need to loop this eventually
     header_url = get_url(f"{block_path}{header}/header")
-    header_response = requests.get(header_url)
 
+    header_response = session.get(header_url)
     if header_response.status_code == 200:
         header_data = header_response.json()
 
@@ -364,7 +386,9 @@ def address_details(address):
 
     offset = request.args.get('offset', default=0, type=int)
 
-    transactions = requests.post(base_url+transaction_path+f"byAddress?offset={offset}&limit=10", headers=headers, data=address)
+    #transactions = requests.post(base_url+transaction_path+f"byAddress?offset={offset}&limit=10", headers=headers, data=address)
+    transactions = session.post(base_url + transaction_path + f"byAddress?offset={offset}&limit=10", headers=headers,
+                                 data=address)
     transactions = transactions.json()
     #tx_ids = [item["id"] for item in transactions["items"]]
     #print("Tx:", tx_ids)
@@ -375,12 +399,15 @@ def address_details(address):
         process_tx = process_address_transaction(i);
         transaction_details.append(process_tx)
 
-    data = requests.post(base_url+address_path, headers=headers, data=address)
+    #data = requests.post(base_url+address_path, headers=headers, data=address)
+    data = session.post(base_url + address_path, headers=headers, data=address)
     address_data=data.json()
 
     #get current block height
     info_url = get_url(f"{info_path}")
-    full_height = requests.get(info_url)
+
+    print("info url", info_url)
+    full_height = session.get(info_url)
     if full_height.status_code == 200:
         full_height = full_height.json()
 
@@ -463,7 +490,7 @@ def token_details(tokenid):
     tokens_data = []  # Initialize an empty list to store the results
     while True:
         token_url = get_url(f"{token_u_path}{tokenid}?offset={offset}&limit={limit}")
-        tokens = requests.get(token_url)
+        tokens = session.get(token_url)
         tokens_json = tokens.json()
 
         if tokens.status_code == 200:
